@@ -1,0 +1,65 @@
+<div class="container-sm text-center mt-5 form-style">
+  <h1>Add Product</h1>
+  <div *ngIf="addProductMessage" class="alert alert-success" role="alert">
+    {{ addProductMessage }}
+  </div>
+  <div class="row justify-content-center">
+    <form
+      #addProduct="ngForm"
+      #sellerSignUp="ngForm"
+      (ngSubmit)="submitProduct(addProduct.value)"
+      class="row g-3 needs-validation"
+    >
+      <input
+        class="form-control"
+        required
+        type="text"
+        placeholder="Enter Product Name"
+        ngModel
+        name="productName"
+      />
+      <input
+        class="form-control"
+        required
+        type="text"
+        placeholder="Enter Product Price"
+        ngModel
+        name="price"
+      />
+      <input
+        class="form-control"
+        required
+        type="text"
+        placeholder="Enter Product Color"
+        ngModel
+        name="color"
+      />
+      <input
+        class="form-control"
+        required
+        type="text"
+        placeholder="Enter Product Category"
+        ngModel
+        name="category"
+      />
+      <input
+        class="form-control"
+        required
+        type="text"
+        placeholder="Enter Product Image url"
+        ngModel
+        name="image"
+      />
+      <textarea
+        class="form-control"
+        required
+        type="text"
+        placeholder="Description"
+        ngModel
+        name="description"
+      ></textarea>
+
+      <button class="btn btn-primary button-style">Add</button>
+    </form>
+  </div>
+</div>

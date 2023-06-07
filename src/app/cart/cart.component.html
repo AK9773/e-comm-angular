@@ -1,0 +1,74 @@
+<div class="cart-page">
+  <div class="row d-flex justify-content-between" *ngIf="cartItems?.length">
+    <div class="cart-container col-lg-7">
+      <ul class="product-details" *ngFor="let item of cartItems">
+        <li>
+          <img class="img-fluid" src="{{ item.image }}" alt="Loading..." />
+        </li>
+        <div class="col-sm-4">
+          <li>{{ item.productName }}</li>
+          <li class="mt-2">Rs: {{ item.price }}</li>
+        </div>
+        <div class="col-sm-4">
+          <li>Quantity: {{ item.quantity }}</li>
+          <li class="mt-2">
+            <button
+              *ngIf="userLogin"
+              class="btn btn-danger"
+              (click)="removeFromCart(item.cartId)"
+            >
+              Remove
+            </button>
+            <button
+              *ngIf="!userLogin"
+              class="btn btn-danger"
+              (click)="removeFromCart(item.productId)"
+            >
+              Remove
+            </button>
+          </li>
+        </div>
+      </ul>
+    </div>
+    <div class="cart-summary col-lg-4">
+      <h1>Cart Summary</h1>
+      <ul class="row">
+        <li>
+          <span><h6>Amount</h6></span><span>{{ cartSummary.amount }}</span>
+        </li>
+        <li>
+          <span><h6>Tax</h6></span><span>{{ cartSummary.tax }}</span>
+        </li>
+
+        <li>
+          <span><h6>Discount</h6></span><span>{{ cartSummary.discount }}</span>
+        </li>
+        <li>
+          <span><h6>Delivery</h6></span><span>{{ cartSummary.delivery }}</span>
+        </li>
+
+        <hr />
+        <li>
+          <span><h3>Total Rs:</h3></span>
+          <h3>{{ cartSummary.total | number }}</h3>
+          <span></span>
+        </li>
+        <hr />
+        <button
+          class="btn btn-primary mx-auto mb-3"
+          (click)="checkout()"
+          *ngIf="checkoutButton"
+        >
+          Checkout
+        </button>
+        <button
+          class="btn btn-secondary mx-auto mb-3"
+          (click)="login()"
+          *ngIf="!checkoutButton"
+        >
+          Login
+        </button>
+      </ul>
+    </div>
+  </div>
+</div>

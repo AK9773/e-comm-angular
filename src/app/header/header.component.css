@@ -1,0 +1,21 @@
+.active {
+  background-color: rgb(224, 242, 132);
+  color: rgb(24, 21, 21);
+  border: 1px solid rgb(68, 255, 0);
+  padding: 5px;
+  border-radius: 5px;
+}
+.suggested-result {
+  width: 12rem;
+  background-color: rgb(211, 208, 208);
+  position: absolute;
+  z-index: 5;
+  text-align: start;
+  border: 1px solid black;
+}
+
+.suggested-result .item {
+  background-color: rgb(29, 28, 28);
+  border: 1px solid rgb(82, 81, 81);
+  color: white;
+}

@@ -1,0 +1,22 @@
+.form-style {
+  width: 50%;
+}
+
+.button-style {
+  width: max-content;
+}
+
+.error {
+  margin: auto;
+  padding: 0.5rem;
+  color: red;
+  background-color: rgb(253, 249, 249);
+  border: 1px solid red;
+  border-radius: 0.5rem;
+  width: fit-content;
+}
+
+.toggle {
+  text-decoration: underline;
+  cursor: pointer;
+}

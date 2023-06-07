@@ -1,0 +1,78 @@
+<div *ngIf="!showLogin" class="container-sm text-center mt-5 form-style">
+  <h1>User Sign-Up</h1>
+  <div *ngIf="signUpMessage" class="alert alert-success" role="alert">
+    {{ signUpMessage }}
+  </div>
+  <div class="row justify-content-center">
+    <form
+      #userSignUp="ngForm"
+      (ngSubmit)="signUp(userSignUp.value)"
+      class="row g-3 needs-validation"
+    >
+      <input
+        class="form-control"
+        required
+        type="text"
+        placeholder="Enter Name Here.."
+        ngModel
+        name="name"
+      />
+      <input
+        class="form-control"
+        required
+        type="password"
+        placeholder="Enter Password"
+        ngModel
+        name="password"
+      />
+      <input
+        class="form-control"
+        required
+        type="text"
+        placeholder="Enter Email Id"
+        ngModel
+        name="email"
+      />
+      <button class="btn btn-primary button-style">Sign-Up</button>
+      <a class="toggle" (click)="openLogin()"
+        >Already have Account? Click to Login</a
+      >
+    </form>
+  </div>
+</div>
+
+<!-- Login Area -->
+
+<div *ngIf="showLogin" class="container-sm text-center mt-5 form-style">
+  <h1>User Login</h1>
+  <h5 class="error" *ngIf="isLogin">{{ authError }}</h5>
+  <div class="row justify-content-center">
+    <form
+      #userLogin="ngForm"
+      (ngSubmit)="login(userLogin.value)"
+      class="row g-3 needs-validation"
+    >
+      <input
+        class="form-control"
+        required
+        type="text"
+        placeholder="Enter Email Id"
+        ngModel
+        name="email"
+      />
+      <input
+        class="form-control"
+        required
+        type="password"
+        placeholder="Enter Password"
+        ngModel
+        name="password"
+      />
+
+      <button class="btn btn-primary button-style">Login</button>
+      <a class="toggle" (click)="openSignUp()"
+        >Don't have Account? Click to SignUp</a
+      >
+    </form>
+  </div>
+</div>

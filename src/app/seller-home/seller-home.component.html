@@ -1,0 +1,38 @@
+<div class="row card-box mt-2">
+  <div
+    class="card col-sm-3 mb-2 me-2"
+    style="width: 18rem"
+    *ngFor="let item of productList"
+  >
+    <img
+      src="{{ item.image }}"
+      class="card-img-top mt-1"
+      alt="loading"
+      style="width: 100%; height: 12rem; object-fit: scale-down"
+    />
+    <div class="card-body">
+      <h5 class="card-title">{{ item.productName }}</h5>
+      <p class="card-text">Price: Rs.{{ item.price }}</p>
+      <div class="d-flex justify-content-between">
+        <a
+          routerLink="/seller-update-product/{{ item.productId }}"
+          class="me-3"
+        >
+          <fa-icon [icon]="editIcon"></fa-icon>
+        </a>
+
+        <fa-icon
+          (click)="productDelete(item.productId)"
+          [icon]="deleteIcon"
+        ></fa-icon>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="deleteProductMessage" class="alert alert-danger mt-1" role="alert">
+  {{ deleteProductMessage }}
+</div>
+<div *ngIf="productListMessage" class="alert alert-secondary mt-5" role="alert">
+  {{ productListMessage }}
+</div>

@@ -1,0 +1,10 @@
+.alert {
+  width: 25%;
+  margin: auto;
+  text-align: center;
+}
+
+.card-box {
+  display: flex;
+  justify-content: center;
+}

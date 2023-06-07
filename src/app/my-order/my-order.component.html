@@ -1,0 +1,39 @@
+<div class="order-container container text-center mt-5">
+  <h1>My Orders</h1>
+  <div class="row" *ngIf="user && !orderMessage">
+    <div class="col-sm-8 d-flex justify-content-between mx-auto mt-4">
+      <div class="col-sm-2">Order</div>
+      <div class="col-sm-2">Order Id</div>
+      <div class="col-sm-2">Price</div>
+      <div class="col-sm-2">Status</div>
+      <div class="col-sm-2">Action</div>
+    </div>
+    <div
+      class="order-box col-sm-8 d-flex justify-content-between mx-auto mt-4 align-items-center"
+      *ngFor="let item of orderData"
+    >
+      <div class="col-sm-2">
+        <img
+          class="image-fluid image-box"
+          src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR1qLn7rfS-Pgk3LiSeI-qXEgpksT-Bxwa39w&usqp=CAU"
+          alt="Loading"
+        />
+      </div>
+      <div class="col-sm-2">{{ item.orderId }}</div>
+      <div class="col-sm-2">{{ item.totalPrice | number }}</div>
+      <div class="col-sm-2">pending</div>
+      <div class="col-sm-2">
+        <button class="btn btn-danger" (click)="cancelOrder(item.orderId)">
+          Cancel
+        </button>
+      </div>
+      <hr />
+    </div>
+  </div>
+</div>
+<div class="container text-center" *ngIf="!user">
+  <a routerLink="/login"><h1>Click Here to Login</h1></a>
+</div>
+<div *ngIf="orderMessage" class="alert alert-secondary mt-5" role="alert">
+  {{ orderMessage }}
+</div>

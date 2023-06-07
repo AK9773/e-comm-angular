@@ -1,0 +1,128 @@
+<header class="p-3 text-bg-dark header">
+  <div class="container">
+    <div
+      class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start"
+    >
+      <div class="logo col-2 col-lg-2 me-5">
+        <a class="navbar-brand" routerLink="/home">E-comm</a>
+      </div>
+
+      <form
+        *ngIf="menuType !== 'seller'"
+        class="col-8 col-lg-3 mb-3 mb-lg-0 me-lg-3"
+        role="search"
+      >
+        <div class="d-flex">
+          <input
+            type="search"
+            #searchInput
+            class="form-control form-control-dark text-bg-dark"
+            (keyup)="searchProduct($event)"
+            (blur)="blurSearch()"
+            placeholder="Search..."
+            aria-label="Search"
+          />
+          <button (click)="search(searchInput.value)" class="btn btn-success">
+            Search
+          </button>
+        </div>
+        <div class="suggested-result" *ngIf="searchResult">
+          <div *ngFor="let item of searchResult" class="item">
+            {{ item.productName }}
+          </div>
+        </div>
+      </form>
+
+      <ul
+        *ngIf="menuType === 'default'"
+        class="nav col-12 col-lg-6 me-lg-auto mb-2 justify-content-center mb-md-0 ms-1"
+      >
+        <li>
+          <a class="nav-link" routerLink="/home" routerLinkActive="active"
+            >Home</a
+          >
+        </li>
+        <li>
+          <a class="nav-link" routerLink="/seller" routerLinkActive="active"
+            >Seller</a
+          >
+        </li>
+        <li>
+          <a class="nav-link" routerLink="/login" routerLinkActive="active"
+            >Login</a
+          >
+        </li>
+        <li>
+          <a
+            class="nav-link"
+            [routerLink]="cartItems > 0 ? '/cart' : null"
+            routerLinkActive="active"
+            >Cart({{ cartItems }})</a
+          >
+        </li>
+      </ul>
+      <ul
+        *ngIf="menuType === 'seller'"
+        class="nav col-12 col-lg-6 me-lg-auto mb-2 justify-content-center justify-content-lg-end mb-md-0 ms-1 flex-fill"
+      >
+        <li>
+          <a
+            class="nav-link"
+            routerLink="/seller-home"
+            routerLinkActive="active"
+            >Product List</a
+          >
+        </li>
+
+        <li>
+          <a
+            class="nav-link"
+            routerLink="/seller-add-product"
+            routerLinkActive="active"
+            >Add Product</a
+          >
+        </li>
+        <li>
+          <p class="nav-link">
+            {{ sellerName | titlecase }}
+          </p>
+        </li>
+        <li>
+          <a class="nav-link" (click)="logout()" routerLink="active">Logout</a>
+        </li>
+      </ul>
+      <ul
+        *ngIf="menuType === 'user'"
+        class="nav col-12 col-lg-6 me-lg-auto mb-2 justify-content-center justify-content-lg-end mb-md-0 ms-1 flex-fill"
+      >
+        <li>
+          <a class="nav-link" routerLink="/home" routerLinkActive="active"
+            >Home</a
+          >
+        </li>
+        <li>
+          <a
+            class="nav-link"
+            [routerLink]="cartItems > 0 ? '/cart' : null"
+            routerLinkActive="active"
+            >Cart({{ cartItems }})</a
+          >
+        </li>
+        <li>
+          <a class="nav-link" routerLink="/my-order" routerLinkActive="active"
+            >My Order</a
+          >
+        </li>
+
+        <li>
+          <p class="nav-link">
+            {{ userName | titlecase }}
+          </p>
+        </li>
+        <li>
+          <a class="nav-link" (click)="logout()" routerLink="active">Logout</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</header>
