@@ -1,5 +1,27 @@
+.navbar-box {
+  display: flex;
+  background-color: #8ecae6;
+}
+.logo {
+  font-size: 1.2rem;
+  font-family: cursive;
+}
+
+a {
+  text-decoration: none;
+  color: #023047;
+}
+.page-link ul {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.page-link ul li {
+  list-style-type: none;
+}
+
 .active {
-  background-color: rgb(224, 242, 132);
+  background-color: #ffb703;
   color: rgb(24, 21, 21);
   border: 1px solid rgb(68, 255, 0);
   padding: 5px;
@@ -17,5 +39,28 @@
 .suggested-result .item {
   background-color: rgb(29, 28, 28);
   border: 1px solid rgb(82, 81, 81);
+  z-index: 5;
   color: white;
+}
+.search-box {
+  border-radius: 10px;
+}
+.input-box {
+  padding-left: 2rem;
+  border: none;
+  height: 3rem;
+  width: 90%;
+  border-top-left-radius: 5px;
+  border-bottom-left-radius: 5px;
+}
+.search-button {
+  height: 3rem;
+  width: 10%;
+  border: none;
+  background-color: #fb8500;
+  border-top-right-radius: 5px;
+  border-bottom-right-radius: 5px;
+}
+.name {
+  margin-bottom: 0;
 }

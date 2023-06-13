@@ -22,7 +22,7 @@ export class ProductDetailsComponent implements OnInit {
     let id = this.activatedRoute.snapshot.paramMap.get('id');
 
     id &&
-      this.productService.getProduct(id).subscribe((result) => {
+      this.productService.getProduct(+id).subscribe((result) => {
         this.product = result;
 
         let cartData = localStorage.getItem('localCart');

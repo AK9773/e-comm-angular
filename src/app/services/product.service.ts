@@ -30,7 +30,7 @@ export class ProductService {
       `http://localhost:8080/product-api/product/productId=${id}`
     );
   }
-  getProduct(id: string) {
+  getProduct(id: number) {
     return this.http.get<Product>(
       `http://localhost:8080/product-api/product/productId=${id}`
     );

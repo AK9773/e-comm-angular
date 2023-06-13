@@ -1,3 +1,8 @@
-.container {
-  margin: auto;
+* {
+  margin: 0;
+  padding: 0;
+}
+
+.container-box {
+  width: 100%;
 }

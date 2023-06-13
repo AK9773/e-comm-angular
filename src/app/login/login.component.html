@@ -59,7 +59,13 @@
         placeholder="Enter Email Id"
         ngModel
         name="email"
+        email
+        #email="ngModel"
+        required
       />
+      <span *ngIf="email.invalid && email.touched"
+        >Please enter valid input</span
+      >
       <input
         class="form-control"
         required
@@ -67,7 +73,12 @@
         placeholder="Enter Password"
         ngModel
         name="password"
+        #password="ngModel"
+        required
       />
+      <span *ngIf="password.invalid && password.touched"
+        >Password is required</span
+      >
 
       <button class="btn btn-primary button-style">Login</button>
       <a class="toggle" (click)="openSignUp()"

@@ -47,6 +47,12 @@ export class HeaderComponent implements OnInit {
   search(val: string) {
     this.router.navigate([`search/${val}`]);
   }
+  itemDetails(productId: number) {
+    console.log('hello');
+    this.productService.getProduct(productId).subscribe((result) => {
+      this.router.navigate([`details/${productId}`]);
+    });
+  }
 
   reloadHeader() {
     this.router.events.subscribe((val: any) => {
