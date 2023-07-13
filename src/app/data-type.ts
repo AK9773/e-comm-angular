@@ -1,12 +1,29 @@
-export interface SignUp {
+export interface Seller {
+  sellerId: undefined | number;
   name: string;
   password: string;
-  email: string;
+  sellerName: string;
+}
+export interface User {
+  userId: undefined | number;
+  name: string;
+  password: string;
+  userName: string;
 }
 
-export interface Login {
-  email: string;
+export interface UserLogin {
+  userName: string;
   password: string;
+}
+
+export interface SellerLogin {
+  sellerName: string;
+  password: string;
+}
+
+export interface JwtResponse {
+  user: User | Seller;
+  jwtToken: string;
 }
 
 export interface Product {

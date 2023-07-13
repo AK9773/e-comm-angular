@@ -17,9 +17,13 @@ export class CheckoutComponent implements OnInit {
     total: 0,
   };
   cartData: Cart[] | undefined;
+
   constructor(private productService: ProductService, private router: Router) {}
+
   ngOnInit(): void {
-    if (localStorage.getItem('user')) {
+    let JwtResponse = localStorage.getItem('JwtResponse');
+    let JwtResponseObj = JwtResponse && JSON.parse(JwtResponse);
+    if (JwtResponseObj && JwtResponseObj.user) {
       this.productService.cartItems().subscribe((result) => {
         if (result) {
           this.cartData = result;
@@ -32,8 +36,9 @@ export class CheckoutComponent implements OnInit {
   }
 
   orderNow(data: { address: string; mobile: string; email: string }) {
-    let user = localStorage.getItem('user');
-    let userId: number = user && JSON.parse(user)[0].userId;
+    let JwtResponse = localStorage.getItem('JwtResponse');
+    let JwtResponseObj = JwtResponse && JSON.parse(JwtResponse);
+    let userId: number = JwtResponseObj.user.userId;
     let order: Order = {
       ...data,
       userId,
@@ -49,6 +54,7 @@ export class CheckoutComponent implements OnInit {
       this.router.navigate(['my-order']);
     });
   }
+
   cartSumaryDetails() {
     let price: number = 0;
     this.cartData &&

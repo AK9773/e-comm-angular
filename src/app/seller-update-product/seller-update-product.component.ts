@@ -24,12 +24,18 @@ export class SellerUpdateProductComponent implements OnInit {
       });
   }
   updateProduct(data: Product) {
+    let JwtResponse = localStorage.getItem('JwtResponse');
+    let JwtResponseObj = JwtResponse && JSON.parse(JwtResponse);
+    data.sellerId = JwtResponseObj.seller.sellerId;
     if (this.productData) {
       data.productId = this.productData.productId;
     }
     this.productService.updateProduct(data).subscribe((result) => {
+      console.log(result);
       if (result) {
-        this.updateProductMessage = 'Project Updated Successfully';
+        console.log(result);
+
+        this.updateProductMessage = 'Product Updated Successfully';
       }
       setTimeout(() => {
         this.updateProductMessage = undefined;

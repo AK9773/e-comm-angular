@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { UserService } from '../services/user.service';
 import { Router } from '@angular/router';
-import { Cart, Login, Product, SignUp } from '../data-type';
+import { Cart, Product, User, UserLogin } from '../data-type';
 import { ProductService } from '../services/product.service';
 import { HeaderComponent } from '../header/header.component';
 
@@ -26,7 +26,7 @@ export class LoginComponent {
     this.userService.reloadUser();
   }
 
-  signUp(data: SignUp): void {
+  signUp(data: User): void {
     this.userService.userSignUp(data).subscribe((result) => {
       if (result) {
         this.signUpMessage = 'Sign Up Successfull';
@@ -34,7 +34,7 @@ export class LoginComponent {
           this.showLogin = true;
         }, 2000);
       } else {
-        this.signUpMessage = 'Email Id already in use';
+        this.signUpMessage = 'userID already in use';
         this.showLogin = false;
       }
       setTimeout(() => {
@@ -43,33 +43,42 @@ export class LoginComponent {
     });
   }
 
-  login(data: Login): void {
-    this.userService.userLogin(data);
-    this.userService.isLogIn.subscribe((isError) => {
-      if (isError) {
-        this.authError = 'Email or Password is incorrect. Please Check.';
-        this.isLogin = true;
-      } else {
-        this.localCartToRemoteCart();
+  login(data: UserLogin): void {
+    this.userService.userLogin(data).subscribe(
+      (result) => {
+        if (result) {
+          let resultData: string = JSON.stringify(result);
+          localStorage.setItem('JwtResponse', resultData);
+          this.router.navigate(['home']);
+          this.localCartToRemoteCart();
+        }
+      },
+      (error) => {
+        if (error && error.status == 401) {
+          this.isLogin = true;
+          this.authError = 'userId or Password is incorrect. Please Check.';
+        }
       }
-    });
+    );
   }
 
   openLogin() {
     this.showLogin = true;
   }
+
   openSignUp() {
     this.showLogin = false;
   }
+
   localCartToRemoteCart() {
     let localCartData = localStorage.getItem('localCart');
-    let user = localStorage.getItem('user');
-    let userId: number = user && JSON.parse(user)[0].userId;
-
+    let JwtResponse = localStorage.getItem('JwtResponse');
+    let JwtResponseObj = JwtResponse && JSON.parse(JwtResponse);
+    let userId: number =
+      JwtResponseObj && JwtResponseObj.user && JwtResponseObj.user.userId;
     if (localCartData) {
       let localCartDataJSON: Product[] =
         localCartData && JSON.parse(localCartData);
-
       localCartDataJSON.forEach((product: Product, index) => {
         delete product.sellerId;
         let cartData: Cart = {
@@ -77,7 +86,6 @@ export class LoginComponent {
           userId,
           cartId: undefined,
         };
-
         this.productService.addToCart(cartData).subscribe();
         if (localCartDataJSON.length === index + 1) {
           localStorage.removeItem('localCart');

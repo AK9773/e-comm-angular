@@ -13,7 +13,15 @@
         class="form-control"
         required
         type="text"
-        placeholder="Enter Name Here.."
+        placeholder="Enter userID here"
+        ngModel
+        name="userName"
+      />
+      <input
+        class="form-control"
+        required
+        type="text"
+        placeholder="Enter full Name Here.."
         ngModel
         name="name"
       />
@@ -25,14 +33,7 @@
         ngModel
         name="password"
       />
-      <input
-        class="form-control"
-        required
-        type="text"
-        placeholder="Enter Email Id"
-        ngModel
-        name="email"
-      />
+
       <button class="btn btn-primary button-style">Sign-Up</button>
       <a class="toggle" (click)="openLogin()"
         >Already have Account? Click to Login</a
@@ -56,16 +57,11 @@
         class="form-control"
         required
         type="text"
-        placeholder="Enter Email Id"
+        placeholder="Enter userId Id"
         ngModel
-        name="email"
-        email
-        #email="ngModel"
+        name="userName"
         required
       />
-      <span *ngIf="email.invalid && email.touched"
-        >Please enter valid input</span
-      >
       <input
         class="form-control"
         required

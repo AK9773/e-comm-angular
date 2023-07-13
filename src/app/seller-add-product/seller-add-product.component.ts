@@ -14,8 +14,9 @@ export class SellerAddProductComponent implements OnInit {
   ngOnInit(): void {}
 
   submitProduct(data: Product) {
-    let seller = localStorage.getItem('seller');
-    let sellerId = seller && JSON.parse(seller)[0].sellerId;
+    let JwtResponse = localStorage.getItem('JwtResponse');
+    let JwtResponseObj = JwtResponse && JSON.parse(JwtResponse);
+    let sellerId = JwtResponseObj.seller.sellerId;
     let productData: Product = {
       ...data,
       sellerId,
@@ -24,8 +25,6 @@ export class SellerAddProductComponent implements OnInit {
       if (result) {
         this.addProductMessage = 'Product Added Successfully';
       }
-      console.log(result);
-
       setTimeout(() => {
         this.addProductMessage = undefined;
         this.router.navigate(['seller-home']);

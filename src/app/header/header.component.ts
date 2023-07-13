@@ -16,20 +16,19 @@ export class HeaderComponent implements OnInit {
   cartItems: number = 0;
 
   constructor(private router: Router, private productService: ProductService) {}
+
   ngOnInit(): void {
     this.reloadHeader();
   }
+
   logout() {
-    if (localStorage.getItem('user')) {
-      localStorage.removeItem('user');
-    }
-    if (localStorage.getItem('seller')) {
-      localStorage.removeItem('seller');
-    }
-    this.router.navigate(['/home']);
+    this.productService.logout();
+    this.productService.cartData.subscribe((result) => {
+      this.cartItems = result.length;
+    });
     this.menuType = 'default';
-    this.productService.cartData.emit([]);
   }
+
   searchProduct(query: KeyboardEvent) {
     if (query) {
       const element = query.target as HTMLInputElement;
@@ -41,14 +40,16 @@ export class HeaderComponent implements OnInit {
       });
     }
   }
+
   blurSearch() {
     this.searchResult = undefined;
   }
+
   search(val: string) {
     this.router.navigate([`search/${val}`]);
   }
+
   itemDetails(productId: number) {
-    console.log('hello');
     this.productService.getProduct(productId).subscribe((result) => {
       this.router.navigate([`details/${productId}`]);
     });
@@ -56,30 +57,35 @@ export class HeaderComponent implements OnInit {
 
   reloadHeader() {
     this.router.events.subscribe((val: any) => {
+      let JwtResponse = localStorage.getItem('JwtResponse');
+      let JwtResponseObj = JwtResponse && JSON.parse(JwtResponse);
       if (val.url) {
-        if (localStorage.getItem('seller') && val.url.includes('seller')) {
+        if (
+          JwtResponseObj &&
+          JwtResponseObj.seller &&
+          val.url.includes('seller')
+        ) {
           this.menuType = 'seller';
-          let sellerStore = localStorage.getItem('seller');
-          let sellerData = sellerStore && JSON.parse(sellerStore)[0];
-          this.sellerName = sellerData.name;
+          this.sellerName = JwtResponseObj.seller.name;
         }
-        if (localStorage.getItem('user')) {
+        if (JwtResponseObj && JwtResponseObj.user) {
           this.menuType = 'user';
-          let userStore = localStorage.getItem('user');
-          let userData = userStore && JSON.parse(userStore)[0];
-          this.userName = userData.name;
-          this.productService.CartItemList(userData.userId);
+          this.userName = JwtResponseObj.user.name;
+          this.productService.CartItemList(JwtResponseObj.user.userId);
         }
       }
-    });
-    let cartData = localStorage.getItem('localCart');
-    if (cartData) {
-      this.cartItems = JSON.parse(cartData).length;
-    }
-    this.productService.cartData.subscribe((result) => {
-      if (result) {
-        this.cartItems = result.length;
+      let cartData = localStorage.getItem('localCart');
+      if (cartData) {
+        this.cartItems = JSON.parse(cartData).length;
       }
+      if (!cartData && !JwtResponse) {
+        this.cartItems = 0;
+      }
+      this.productService.cartData.subscribe((result) => {
+        if (result) {
+          this.cartItems = result.length;
+        }
+      });
     });
   }
 }

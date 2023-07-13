@@ -21,19 +21,23 @@ export class CartComponent implements OnInit {
   };
 
   constructor(private productService: ProductService, private router: Router) {}
+
   ngOnInit(): void {
     this.loadDetails();
   }
+
   checkout() {
     this.router.navigate(['checkout']);
   }
+
   removeFromCart(cartId: number | undefined) {
-    if (localStorage.getItem('user')) {
+    let JwtResponse = localStorage.getItem('JwtResponse');
+    let JwtResponseObj = JwtResponse && JSON.parse(JwtResponse);
+    if (JwtResponseObj && JwtResponseObj.user) {
       if (this.cartItems && cartId) {
         this.productService.removeFromDBCart(cartId).subscribe((result) => {
           if (result) {
-            let user = localStorage.getItem('user');
-            let userId = user && JSON.parse(user)[0].userId;
+            let userId = JwtResponseObj.user.userId;
             this.productService.CartItemList(userId);
             this.loadDetails();
           }
@@ -46,9 +50,12 @@ export class CartComponent implements OnInit {
       }
     }
   }
+
   loadDetails() {
-    if (localStorage.getItem('user')) {
-      let user = localStorage.getItem('user');
+    let JwtResponse = localStorage.getItem('JwtResponse');
+    let JwtResponseObj = JwtResponse && JSON.parse(JwtResponse);
+    if (JwtResponseObj && JwtResponseObj.user) {
+      // let user = localStorage.getItem('user');
       this.productService.cartItems().subscribe((result) => {
         if (result) {
           this.cartItems = result;
@@ -72,6 +79,7 @@ export class CartComponent implements OnInit {
       this.userLogin = false;
     }
   }
+
   cartSummaryDetails() {
     let price: number = 0;
     this.cartItems &&
@@ -90,6 +98,7 @@ export class CartComponent implements OnInit {
       this.cartSummary.discount +
       this.cartSummary.delivery;
   }
+
   login() {
     this.router.navigate(['/login']);
   }

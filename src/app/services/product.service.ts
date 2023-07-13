@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { EventEmitter, Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { Cart, Order, Product } from '../data-type';
@@ -9,8 +9,17 @@ import { Cart, Order, Product } from '../data-type';
 export class ProductService {
   cartData = new EventEmitter<Product[] | []>();
   constructor(private http: HttpClient, private router: Router) {}
+
   addProduct(data: Product) {
-    return this.http.post('http://localhost:8080/product-api/product', data);
+    let JwtResponse = localStorage.getItem('JwtResponse');
+    let JwtResponseObj = JwtResponse && JSON.parse(JwtResponse);
+    let headers = new HttpHeaders().set(
+      'Authorization',
+      `Bearer ${JwtResponseObj.jwtToken}`
+    );
+    return this.http.post('http://localhost:8080/product-api/product', data, {
+      headers,
+    });
   }
 
   productList() {
@@ -20,25 +29,48 @@ export class ProductService {
   }
 
   sellerProductList(sellerId: number) {
+    let JwtResponse = localStorage.getItem('JwtResponse');
+    let JwtResponseObj = JwtResponse && JSON.parse(JwtResponse);
+    let headers = new HttpHeaders().set(
+      'Authorization',
+      `Bearer ${JwtResponseObj.jwtToken}`
+    );
     return this.http.get<Product[]>(
-      'http://localhost:8080/product-api/product/sellerId=' + sellerId
+      'http://localhost:8080/product-api/product/sellerId=' + sellerId,
+      { headers }
     );
   }
 
   deleteProduct(id: number) {
+    let JwtResponse = localStorage.getItem('JwtResponse');
+    let JwtResponseObj = JwtResponse && JSON.parse(JwtResponse);
+    let headers = new HttpHeaders().set(
+      'Authorization',
+      `Bearer ${JwtResponseObj.jwtToken}`
+    );
     return this.http.delete(
-      `http://localhost:8080/product-api/product/productId=${id}`
+      `http://localhost:8080/product-api/product/productId=${id}`,
+      { headers }
     );
   }
+
   getProduct(id: number) {
     return this.http.get<Product>(
       `http://localhost:8080/product-api/product/productId=${id}`
     );
   }
+
   updateProduct(product: Product) {
+    let JwtResponse = localStorage.getItem('JwtResponse');
+    let JwtResponseObj = JwtResponse && JSON.parse(JwtResponse);
+    let headers = new HttpHeaders().set(
+      'Authorization',
+      `Bearer ${JwtResponseObj.jwtToken}`
+    );
     return this.http.put<Product>(
       `http://localhost:8080/product-api/product/productId=${product.productId}`,
-      product
+      product,
+      { headers }
     );
   }
 
@@ -61,6 +93,7 @@ export class ProductService {
     }
     this.cartData.emit(cartData);
   }
+
   removeFromCart(id: number) {
     let cartData = localStorage.getItem('localCart');
     if (cartData) {
@@ -74,18 +107,40 @@ export class ProductService {
   }
 
   addToCart(cartItem: Cart) {
-    return this.http.post('http://localhost:8080/cart-api/cart', cartItem);
+    let JwtResponse = localStorage.getItem('JwtResponse');
+    let JwtResponseObj = JwtResponse && JSON.parse(JwtResponse);
+    let headers = new HttpHeaders().set(
+      'Authorization',
+      `Bearer ${JwtResponseObj.jwtToken}`
+    );
+    return this.http.post('http://localhost:8080/cart-api/cart', cartItem, {
+      headers,
+    });
   }
 
   cartItemByProductId(productId: number) {
+    let JwtResponse = localStorage.getItem('JwtResponse');
+    let JwtResponseObj = JwtResponse && JSON.parse(JwtResponse);
+    let headers = new HttpHeaders().set(
+      'Authorization',
+      `Bearer ${JwtResponseObj.jwtToken}`
+    );
     return this.http.get<Cart[]>(
-      'http://localhost:8080/cart-api/cart/productId=' + productId
+      'http://localhost:8080/cart-api/cart/productId=' + productId,
+      { headers }
     );
   }
 
   CartItemList(userId: number) {
+    let JwtResponse = localStorage.getItem('JwtResponse');
+    let JwtResponseObj = JwtResponse && JSON.parse(JwtResponse);
+    let headers = new HttpHeaders().set(
+      'Authorization',
+      `Bearer ${JwtResponseObj.jwtToken}`
+    );
     return this.http
       .get<Product[]>('http://localhost:8080/cart-api/cart/userId=' + userId, {
+        headers,
         observe: 'response',
       })
       .subscribe((result) => {
@@ -96,37 +151,92 @@ export class ProductService {
   }
 
   removeFromDBCart(cartId: number) {
+    let JwtResponse = localStorage.getItem('JwtResponse');
+    let JwtResponseObj = JwtResponse && JSON.parse(JwtResponse);
+    let headers = new HttpHeaders().set(
+      'Authorization',
+      `Bearer ${JwtResponseObj.jwtToken}`
+    );
     return this.http.delete(
-      'http://localhost:8080/cart-api/cart/cartId=' + cartId
+      'http://localhost:8080/cart-api/cart/cartId=' + cartId,
+      { headers }
     );
   }
 
   cartItems() {
-    let userStore = localStorage.getItem('user');
-    let userData = userStore && JSON.parse(userStore)[0];
+    let JwtResponse = localStorage.getItem('JwtResponse');
+    let JwtResponseObj = JwtResponse && JSON.parse(JwtResponse);
+    let headers = new HttpHeaders().set(
+      'Authorization',
+      `Bearer ${JwtResponseObj.jwtToken}`
+    );
     return this.http.get<Cart[]>(
-      'http://localhost:8080/cart-api/cart/userId=' + userData.userId
+      'http://localhost:8080/cart-api/cart/userId=' +
+        JwtResponseObj.user.userId,
+      { headers }
     );
   }
+
   orderNow(order: Order) {
-    return this.http.post('http://localhost:8080/order-api/order', order);
+    let JwtResponse = localStorage.getItem('JwtResponse');
+    let JwtResponseObj = JwtResponse && JSON.parse(JwtResponse);
+    let headers = new HttpHeaders().set(
+      'Authorization',
+      `Bearer ${JwtResponseObj.jwtToken}`
+    );
+    return this.http.post('http://localhost:8080/order-api/order', order, {
+      headers,
+    });
   }
 
   orderData(userId: number) {
+    let JwtResponse = localStorage.getItem('JwtResponse');
+    let JwtResponseObj = JwtResponse && JSON.parse(JwtResponse);
+    let headers = new HttpHeaders().set(
+      'Authorization',
+      `Bearer ${JwtResponseObj.jwtToken}`
+    );
     return this.http.get<Order[]>(
-      'http://localhost:8080/order-api/order/userId=' + userId
+      'http://localhost:8080/order-api/order/userId=' + userId,
+      { headers }
     );
   }
+
   deleteCartItems(cartId: number) {
+    let JwtResponse = localStorage.getItem('JwtResponse');
+    let JwtResponseObj = JwtResponse && JSON.parse(JwtResponse);
+    let headers = new HttpHeaders().set(
+      'Authorization',
+      `Bearer ${JwtResponseObj.jwtToken}`
+    );
     return this.http
       .delete('http://localhost:8080/cart-api/cart/cartId=' + cartId, {
         observe: 'response',
+        headers,
       })
       .subscribe((result) => {
         this.cartData.emit([]);
       });
   }
+
   cancelOrder(orderId: number) {
-    return this.http.delete('http://localhost:8080/order-api/order/' + orderId);
+    let JwtResponse = localStorage.getItem('JwtResponse');
+    let JwtResponseObj = JwtResponse && JSON.parse(JwtResponse);
+    let headers = new HttpHeaders().set(
+      'Authorization',
+      `Bearer ${JwtResponseObj.jwtToken}`
+    );
+    return this.http.delete(
+      'http://localhost:8080/order-api/order/' + orderId,
+      { headers }
+    );
+  }
+
+  logout() {
+    if (localStorage.getItem('JwtResponse')) {
+      localStorage.removeItem('JwtResponse');
+    }
+    this.router.navigate(['/home']);
+    this.cartData.emit([]);
   }
 }

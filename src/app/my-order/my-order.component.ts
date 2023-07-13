@@ -9,8 +9,10 @@ import { Order } from '../data-type';
 })
 export class MyOrderComponent implements OnInit {
   orderData: undefined | Order[];
-  user = localStorage.getItem('user');
-  userId = this.user && JSON.parse(this.user)[0].userId;
+  JwtResponse = localStorage.getItem('JwtResponse');
+  JwtResponseObj = this.JwtResponse && JSON.parse(this.JwtResponse);
+  user = this.JwtResponseObj && this.JwtResponseObj.user;
+  userId = this.user && this.user.userId;
   orderMessage: string | undefined;
   constructor(private productService: ProductService) {}
   ngOnInit(): void {
@@ -24,6 +26,7 @@ export class MyOrderComponent implements OnInit {
         this.getOrderList();
       });
   }
+
   getOrderList() {
     this.productService.orderData(this.userId).subscribe((result) => {
       this.orderData = result;

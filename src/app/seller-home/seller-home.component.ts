@@ -29,15 +29,17 @@ export class SellerHomeComponent implements OnInit {
   }
 
   list() {
-    let seller = localStorage.getItem('seller');
-    let sellerId = seller && JSON.parse(seller)[0].sellerId;
-    this.productService.sellerProductList(sellerId).subscribe((result) => {
-      if (result) {
-        this.productList = result;
-      }
-      if (result.length === 0) {
-        this.productListMessage = 'No Product Added';
-      }
-    });
+    let JwtResponse = localStorage.getItem('JwtResponse');
+    let JwtResponseObj = JwtResponse && JSON.parse(JwtResponse);
+    this.productService
+      .sellerProductList(JwtResponseObj.seller.sellerId)
+      .subscribe((result) => {
+        if (result) {
+          this.productList = result;
+        }
+        if (result.length === 0) {
+          this.productListMessage = 'No Product Added';
+        }
+      });
   }
 }

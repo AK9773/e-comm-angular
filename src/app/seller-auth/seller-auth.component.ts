@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { SellerService } from '../services/seller.service';
 import { Router } from '@angular/router';
-import { Login, SignUp } from '../data-type';
+import { Seller, SellerLogin } from '../data-type';
 
 @Component({
   selector: 'app-seller-auth',
@@ -20,7 +20,7 @@ export class SellerAuthComponent {
     this.sellerService.reloadSeller();
   }
 
-  signUp(data: SignUp): void {
+  signUp(data: Seller): void {
     this.sellerService.sellerSignUp(data).subscribe((result) => {
       if (result) {
         this.signUpMessage = 'Sign Up Successfull';
@@ -28,7 +28,7 @@ export class SellerAuthComponent {
           this.showLogin = true;
         }, 2000);
       } else {
-        this.signUpMessage = 'Email Id already in use';
+        this.signUpMessage = 'Seller ID already used';
         this.showLogin = false;
       }
       setTimeout(() => {
@@ -37,14 +37,22 @@ export class SellerAuthComponent {
     });
   }
 
-  login(data: Login): void {
-    this.sellerService.sellerLogin(data);
-    this.sellerService.isLogIn.subscribe((isError) => {
-      if (isError) {
-        this.authError = 'Email or Password is incorrect. Please Check.';
-        this.isLogin = true;
+  login(data: SellerLogin): void {
+    this.sellerService.sellerLogin(data).subscribe(
+      (result) => {
+        if (result) {
+          let resultData = JSON.stringify(result);
+          localStorage.setItem('JwtResponse', resultData);
+          this.router.navigate(['seller-home']);
+        }
+      },
+      (error) => {
+        if (error && error.status == 401) {
+          this.isLogin = true;
+          this.authError = 'sellerId or Password is incorrect. Please Check.';
+        }
       }
-    });
+    );
   }
 
   openLogin() {

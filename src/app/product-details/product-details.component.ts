@@ -51,12 +51,13 @@ export class ProductDetailsComponent implements OnInit {
   addToCart() {
     if (this.product) {
       this.product.quantity = this.quantityProduct;
-      if (!localStorage.getItem('user')) {
+      if (!localStorage.getItem('JwtResponse')) {
         this.productService.localAddToCart(this.product);
         this.addCart = false;
       } else {
-        let user = localStorage.getItem('user');
-        let userId = user && JSON.parse(user)[0].userId;
+        let JwtResponse = localStorage.getItem('JwtResponse');
+        let JwtResponseObj = JwtResponse && JSON.parse(JwtResponse);
+        let userId = JwtResponseObj.user.userId;
         let cartData: Cart = {
           ...this.product,
           productId: this.product.productId,
@@ -73,19 +74,18 @@ export class ProductDetailsComponent implements OnInit {
     }
   }
   removeFromCart(id: number) {
-    if (!localStorage.getItem('user')) {
+    if (!localStorage.getItem('JwtResponse')) {
       this.productService.removeFromCart(id);
       this.addCart = true;
     }
-    if (localStorage.getItem('user')) {
-      let user = localStorage.getItem('user');
-      let userId = user && JSON.parse(user)[0].userId;
+    if (localStorage.getItem('JwtResponse')) {
+      let JwtResponse = localStorage.getItem('JwtResponse');
+      let JwtResponseObj = JwtResponse && JSON.parse(JwtResponse);
+      let userId = JwtResponseObj.user.userId;
       if (this.cartData) {
         this.productService
           .cartItemByProductId(this.cartData.productId)
           .subscribe((result) => {
-            console.log(result);
-
             if (result && result[0].cartId) {
               this.productService
                 .removeFromDBCart(result[0].cartId)
@@ -93,7 +93,6 @@ export class ProductDetailsComponent implements OnInit {
                   if (result) {
                     this.productService.CartItemList(userId);
                     this.addCart = true;
-                    console.log('hello');
                   }
                 });
             }
@@ -101,15 +100,47 @@ export class ProductDetailsComponent implements OnInit {
       }
     }
   }
+
   buyNow() {
-    this.addToCart();
-    this.router.navigate(['/checkout']);
+    if (localStorage.getItem('JwtResponse')) {
+      let productId = this.product && this.product.productId;
+      if (productId) {
+        this.productService
+          .cartItemByProductId(productId)
+          .subscribe((result) => {
+            if (result.length == 0) {
+              this.addToCart();
+            }
+            this.router.navigate(['/checkout']);
+          });
+      }
+    } else if (localStorage.getItem('localCart')) {
+      let localCart = localStorage.getItem('localCart');
+      let localCartObj = localCart && JSON.parse(localCart);
+      let available: boolean = true;
+      if (localCartObj && this.product) {
+        for (let index = 0; index < localCartObj.length; index++) {
+          if (localCartObj[index].productId == this.product.productId) {
+            available = false;
+            break;
+          }
+        }
+        if (available) {
+          this.addToCart();
+        }
+      }
+      this.router.navigate(['/login']);
+    } else {
+      this.addToCart();
+      this.router.navigate(['/login']);
+    }
   }
 
   loadDetails() {
-    let user = localStorage.getItem('user');
-    if (user) {
-      let userId = JSON.parse(user)[0].userId;
+    let JwtResponse = localStorage.getItem('JwtResponse');
+    let JwtResponseObj = JwtResponse && JSON.parse(JwtResponse);
+    if (JwtResponseObj && JwtResponseObj.user) {
+      let userId = JwtResponseObj.user.userId;
       this.productService.CartItemList(userId);
       let id = this.activatedRoute.snapshot.paramMap.get('id');
       this.productService.cartData.subscribe((result) => {
