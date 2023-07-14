@@ -64,8 +64,11 @@ export class ProductDetailsComponent implements OnInit {
           userId: userId,
           cartId: undefined,
         };
+        console.log(cartData);
+
         this.productService.addToCart(cartData).subscribe((result) => {
           if (result) {
+            console.log(result);
             this.productService.CartItemList(userId);
             this.addCart = false;
           }

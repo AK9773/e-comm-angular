@@ -22,11 +22,15 @@ export class HeaderComponent implements OnInit {
   }
 
   logout() {
-    this.productService.logout();
-    this.productService.cartData.subscribe((result) => {
-      this.cartItems = result.length;
-    });
+    if (localStorage.getItem('JwtResponse')) {
+      localStorage.removeItem('JwtResponse');
+    }
     this.menuType = 'default';
+    this.router.navigate(['/home']);
+    this.productService.cartData.emit([]);
+    this.productService.cartData.subscribe((result) => {
+      console.log(result);
+    });
   }
 
   searchProduct(query: KeyboardEvent) {
@@ -77,9 +81,6 @@ export class HeaderComponent implements OnInit {
       let cartData = localStorage.getItem('localCart');
       if (cartData) {
         this.cartItems = JSON.parse(cartData).length;
-      }
-      if (!cartData && !JwtResponse) {
-        this.cartItems = 0;
       }
       this.productService.cartData.subscribe((result) => {
         if (result) {

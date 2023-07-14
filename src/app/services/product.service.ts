@@ -231,12 +231,4 @@ export class ProductService {
       { headers }
     );
   }
-
-  logout() {
-    if (localStorage.getItem('JwtResponse')) {
-      localStorage.removeItem('JwtResponse');
-    }
-    this.router.navigate(['/home']);
-    this.cartData.emit([]);
-  }
 }
