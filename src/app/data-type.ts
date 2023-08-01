@@ -1,3 +1,5 @@
+import { SafeUrl } from '@angular/platform-browser';
+
 export interface Seller {
   sellerId: undefined | number;
   name: string;
@@ -26,29 +28,17 @@ export interface JwtResponse {
   jwtToken: string;
 }
 
-export interface Product {
-  productName: string;
-  price: string;
-  color: string;
-  category: string;
-  image: string;
-  description: string;
-  quantity: undefined | number;
-  productId: number;
-  sellerId: number | undefined;
-}
-
 export interface Cart {
   productName: string;
   price: string;
   color: string;
   category: string;
-  image: string;
+  imageName: string;
   description: string;
   quantity: undefined | number;
   productId: number;
   cartId: number | undefined;
-  userId: number;
+  userId?: number;
 }
 
 export interface CartSummary {
@@ -66,4 +56,38 @@ export interface Order {
   userId: number;
   totalPrice: number;
   orderId: number | undefined;
+}
+
+export interface FileHandle {
+  file: File;
+}
+
+export interface Image {
+  imageId: number;
+  imageName: string;
+  type: string;
+  imageBytes: string;
+}
+
+export interface Product {
+  productId: number;
+  productName: string;
+  price: string;
+  color: string;
+  category: string;
+  productImages: FileHandle[];
+  description: string;
+  quantity: undefined | number;
+  sellerId: number | undefined;
+}
+export interface ProductResponse {
+  productId: number;
+  productName: string;
+  price: string;
+  color: string;
+  category: string;
+  productImages: Image[];
+  description: string;
+  quantity: undefined | number;
+  sellerId: number | undefined;
 }

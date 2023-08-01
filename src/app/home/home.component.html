@@ -8,7 +8,9 @@
     <div class="carousel-item active">
       <a class="link" routerLink="/details/{{ productList[0].productId }}"
         ><img
-          src="{{ productList[0].image }}"
+          src="http://localhost:8080/image-api/{{
+            productList[0].productImages[0].imageName
+          }}"
           class="card-img-top mt-1 image-box"
           alt="loading"
           style="width: 100%; height: 50vh; object-fit: contain; padding: 10px"
@@ -19,7 +21,9 @@
     <div class="carousel-item">
       <a class="link" routerLink="/details/{{ productList[1].productId }}"
         ><img
-          src="{{ productList[1].image }}"
+          src="http://localhost:8080/image-api/{{
+            productList[1].productImages[0].imageName
+          }}"
           class="card-img-top mt-1 image-box"
           alt="loading"
           style="width: 100%; height: 50vh; object-fit: contain; padding: 10px"
@@ -30,7 +34,9 @@
     <div class="carousel-item">
       <a class="link" routerLink="/details/{{ productList[2].productId }}"
         ><img
-          src="{{ productList[2].image }}"
+          src="http://localhost:8080/image-api/{{
+            productList[2].productImages[0].imageName
+          }}"
           class="card-img-top mt-1 image-box"
           alt="loading"
           style="width: 100%; height: 50vh; object-fit: contain; padding: 10px"
@@ -41,7 +47,9 @@
     <div class="carousel-item">
       <a class="link" routerLink="/details/{{ productList[3].productId }}"
         ><img
-          src="{{ productList[3].image }}"
+          src="http://localhost:8080/image-api/{{
+            productList[3].productImages[0].imageName
+          }}"
           class="card-img-top mt-1 image-box"
           alt="loading"
           style="width: 100%; height: 50vh; object-fit: contain; padding: 10px"
@@ -78,7 +86,9 @@
   >
     <a routerLink="/details/{{ item.productId }}"
       ><img
-        src="{{ item.image }}"
+        src="http://localhost:8080/image-api/{{
+          item.productImages[0].imageName
+        }}"
         class="card-img-top mt-1"
         alt="loading"
         style="width: 100%; height: 12rem; object-fit: contain"

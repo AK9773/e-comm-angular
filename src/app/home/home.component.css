@@ -6,10 +6,12 @@
   border: 3px solid rgba(137, 43, 226, 0.362);
   border-radius: 10px;
   z-index: 1;
+  background-color: rgb(186, 247, 250);
 }
 
 .card-box {
   border: 2px solid rgba(137, 43, 226, 0.362);
+  background-color: rgb(215, 247, 248);
 }
 .link {
   text-decoration: none;
@@ -17,11 +19,11 @@
 
 .name {
   text-align: center;
-  background-color: rgb(249, 174, 187);
+  background-color: rgb(187, 243, 232);
   border: 2px solid white;
   border-radius: 10px;
   z-index: 2;
   position: relative;
   top: -2.8rem;
-  color: rgb(135, 36, 118);
+  color: rgb(125, 109, 214);
 }

@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { UserService } from '../services/user.service';
 import { Router } from '@angular/router';
-import { Cart, Product, User, UserLogin } from '../data-type';
+import { Cart, Product, ProductResponse, User, UserLogin } from '../data-type';
 import { ProductService } from '../services/product.service';
 import { HeaderComponent } from '../header/header.component';
 
@@ -77,10 +77,9 @@ export class LoginComponent {
     let userId: number =
       JwtResponseObj && JwtResponseObj.user && JwtResponseObj.user.userId;
     if (localCartData) {
-      let localCartDataJSON: Product[] =
+      let localCartDataJSON: Cart[] =
         localCartData && JSON.parse(localCartData);
-      localCartDataJSON.forEach((product: Product, index) => {
-        delete product.sellerId;
+      localCartDataJSON.forEach((product: Cart, index) => {
         let cartData: Cart = {
           ...product,
           userId,

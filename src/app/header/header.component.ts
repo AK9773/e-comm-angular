@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ProductService } from '../services/product.service';
-import { Product } from '../data-type';
+import { Product, ProductResponse } from '../data-type';
 
 @Component({
   selector: 'app-header',
@@ -12,7 +12,7 @@ export class HeaderComponent implements OnInit {
   menuType: string = 'default';
   sellerName: string = '';
   userName: string = '';
-  searchResult: Product[] | undefined;
+  searchResult: ProductResponse[] | undefined;
   cartItems: number = 0;
 
   constructor(private router: Router, private productService: ProductService) {}

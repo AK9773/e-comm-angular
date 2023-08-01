@@ -3,7 +3,11 @@
     <div class="cart-container col-lg-7">
       <ul class="product-details" *ngFor="let item of cartItems">
         <li>
-          <img class="img-fluid" src="{{ item.image }}" alt="Loading..." />
+          <img
+            class="img-fluid"
+            src="http://localhost:8080/image-api/{{ item.imageName }}"
+            alt="Loading..."
+          />
         </li>
         <div class="col-sm-4">
           <li>

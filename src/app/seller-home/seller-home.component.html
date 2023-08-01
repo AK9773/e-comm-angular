@@ -1,11 +1,13 @@
-<div class="row card-box mt-2">
+<div class="row card-box mt-2" *ngIf="productList">
   <div
     class="card col-sm-3 mb-2 me-2"
     style="width: 18rem"
     *ngFor="let item of productList"
   >
     <img
-      src="{{ item.image }}"
+      src="http://localhost:8080/image-api/{{
+        item.productImages[0].imageName
+      }}"
       class="card-img-top mt-1"
       alt="loading"
       style="width: 100%; height: 12rem; object-fit: scale-down"

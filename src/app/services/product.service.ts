@@ -1,53 +1,38 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { EventEmitter, Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { Cart, Order, Product } from '../data-type';
+import { Cart, Order, Product, ProductResponse } from '../data-type';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ProductService {
-  cartData = new EventEmitter<Product[] | []>();
+  cartData = new EventEmitter<Cart[] | []>();
   constructor(private http: HttpClient, private router: Router) {}
 
-  addProduct(data: Product) {
-    let JwtResponse = localStorage.getItem('JwtResponse');
-    let JwtResponseObj = JwtResponse && JSON.parse(JwtResponse);
-    let headers = new HttpHeaders().set(
-      'Authorization',
-      `Bearer ${JwtResponseObj.jwtToken}`
-    );
+  addProduct(data: FormData) {
+    let headers = this.headers();
     return this.http.post('http://localhost:8080/product-api/product', data, {
       headers,
     });
   }
 
   productList() {
-    return this.http.get<Product[]>(
+    return this.http.get<ProductResponse[]>(
       'http://localhost:8080/product-api/product'
     );
   }
 
   sellerProductList(sellerId: number) {
-    let JwtResponse = localStorage.getItem('JwtResponse');
-    let JwtResponseObj = JwtResponse && JSON.parse(JwtResponse);
-    let headers = new HttpHeaders().set(
-      'Authorization',
-      `Bearer ${JwtResponseObj.jwtToken}`
-    );
-    return this.http.get<Product[]>(
+    let headers = this.headers();
+    return this.http.get<ProductResponse[]>(
       'http://localhost:8080/product-api/product/sellerId=' + sellerId,
       { headers }
     );
   }
 
   deleteProduct(id: number) {
-    let JwtResponse = localStorage.getItem('JwtResponse');
-    let JwtResponseObj = JwtResponse && JSON.parse(JwtResponse);
-    let headers = new HttpHeaders().set(
-      'Authorization',
-      `Bearer ${JwtResponseObj.jwtToken}`
-    );
+    let headers = this.headers();
     return this.http.delete(
       `http://localhost:8080/product-api/product/productId=${id}`,
       { headers }
@@ -55,19 +40,14 @@ export class ProductService {
   }
 
   getProduct(id: number) {
-    return this.http.get<Product>(
+    return this.http.get<ProductResponse>(
       `http://localhost:8080/product-api/product/productId=${id}`
     );
   }
 
-  updateProduct(product: Product) {
-    let JwtResponse = localStorage.getItem('JwtResponse');
-    let JwtResponseObj = JwtResponse && JSON.parse(JwtResponse);
-    let headers = new HttpHeaders().set(
-      'Authorization',
-      `Bearer ${JwtResponseObj.jwtToken}`
-    );
-    return this.http.put<Product>(
+  updateProduct(product: ProductResponse) {
+    let headers = this.headers();
+    return this.http.put<ProductResponse>(
       `http://localhost:8080/product-api/product/productId=${product.productId}`,
       product,
       { headers }
@@ -75,12 +55,12 @@ export class ProductService {
   }
 
   searchProduct(query: string) {
-    return this.http.get<Product[]>(
+    return this.http.get<ProductResponse[]>(
       `http://localhost:8080/product-api/product/query=${query}`
     );
   }
 
-  localAddToCart(data: Product) {
+  localAddToCart(data: Cart) {
     let cartData = [];
     let localCartData = localStorage.getItem('localCart');
     if (!localCartData) {
@@ -97,9 +77,9 @@ export class ProductService {
   removeFromCart(id: number) {
     let cartData = localStorage.getItem('localCart');
     if (cartData) {
-      let items: Product[] = JSON.parse(cartData);
-      let filteredItems: Product[] = items.filter(
-        (product: Product) => id !== product.productId
+      let items: Cart[] = JSON.parse(cartData);
+      let filteredItems: Cart[] = items.filter(
+        (cart: Cart) => id !== cart.productId
       );
       localStorage.setItem('localCart', JSON.stringify(filteredItems));
       this.cartData.emit(filteredItems);
@@ -107,24 +87,18 @@ export class ProductService {
   }
 
   addToCart(cartItem: Cart) {
-    let JwtResponse = localStorage.getItem('JwtResponse');
-    let JwtResponseObj = JwtResponse && JSON.parse(JwtResponse);
-    let headers = new HttpHeaders().set(
-      'Authorization',
-      `Bearer ${JwtResponseObj.jwtToken}`
+    let headers = this.headers();
+    return this.http.post<Cart>(
+      'http://localhost:8080/cart-api/cart',
+      cartItem,
+      {
+        headers,
+      }
     );
-    return this.http.post('http://localhost:8080/cart-api/cart', cartItem, {
-      headers,
-    });
   }
 
   cartItemByProductId(productId: number) {
-    let JwtResponse = localStorage.getItem('JwtResponse');
-    let JwtResponseObj = JwtResponse && JSON.parse(JwtResponse);
-    let headers = new HttpHeaders().set(
-      'Authorization',
-      `Bearer ${JwtResponseObj.jwtToken}`
-    );
+    let headers = this.headers();
     return this.http.get<Cart[]>(
       'http://localhost:8080/cart-api/cart/productId=' + productId,
       { headers }
@@ -132,14 +106,9 @@ export class ProductService {
   }
 
   CartItemList(userId: number) {
-    let JwtResponse = localStorage.getItem('JwtResponse');
-    let JwtResponseObj = JwtResponse && JSON.parse(JwtResponse);
-    let headers = new HttpHeaders().set(
-      'Authorization',
-      `Bearer ${JwtResponseObj.jwtToken}`
-    );
+    let headers = this.headers();
     return this.http
-      .get<Product[]>('http://localhost:8080/cart-api/cart/userId=' + userId, {
+      .get<Cart[]>('http://localhost:8080/cart-api/cart/userId=' + userId, {
         headers,
         observe: 'response',
       })
@@ -151,12 +120,7 @@ export class ProductService {
   }
 
   removeFromDBCart(cartId: number) {
-    let JwtResponse = localStorage.getItem('JwtResponse');
-    let JwtResponseObj = JwtResponse && JSON.parse(JwtResponse);
-    let headers = new HttpHeaders().set(
-      'Authorization',
-      `Bearer ${JwtResponseObj.jwtToken}`
-    );
+    let headers = this.headers();
     return this.http.delete(
       'http://localhost:8080/cart-api/cart/cartId=' + cartId,
       { headers }
@@ -178,24 +142,14 @@ export class ProductService {
   }
 
   orderNow(order: Order) {
-    let JwtResponse = localStorage.getItem('JwtResponse');
-    let JwtResponseObj = JwtResponse && JSON.parse(JwtResponse);
-    let headers = new HttpHeaders().set(
-      'Authorization',
-      `Bearer ${JwtResponseObj.jwtToken}`
-    );
+    let headers = this.headers();
     return this.http.post('http://localhost:8080/order-api/order', order, {
       headers,
     });
   }
 
   orderData(userId: number) {
-    let JwtResponse = localStorage.getItem('JwtResponse');
-    let JwtResponseObj = JwtResponse && JSON.parse(JwtResponse);
-    let headers = new HttpHeaders().set(
-      'Authorization',
-      `Bearer ${JwtResponseObj.jwtToken}`
-    );
+    let headers = this.headers();
     return this.http.get<Order[]>(
       'http://localhost:8080/order-api/order/userId=' + userId,
       { headers }
@@ -203,12 +157,7 @@ export class ProductService {
   }
 
   deleteCartItems(cartId: number) {
-    let JwtResponse = localStorage.getItem('JwtResponse');
-    let JwtResponseObj = JwtResponse && JSON.parse(JwtResponse);
-    let headers = new HttpHeaders().set(
-      'Authorization',
-      `Bearer ${JwtResponseObj.jwtToken}`
-    );
+    let headers = this.headers();
     return this.http
       .delete('http://localhost:8080/cart-api/cart/cartId=' + cartId, {
         observe: 'response',
@@ -220,15 +169,20 @@ export class ProductService {
   }
 
   cancelOrder(orderId: number) {
+    let headers = this.headers();
+    return this.http.delete(
+      'http://localhost:8080/order-api/order/' + orderId,
+      { headers }
+    );
+  }
+
+  headers() {
     let JwtResponse = localStorage.getItem('JwtResponse');
     let JwtResponseObj = JwtResponse && JSON.parse(JwtResponse);
     let headers = new HttpHeaders().set(
       'Authorization',
       `Bearer ${JwtResponseObj.jwtToken}`
     );
-    return this.http.delete(
-      'http://localhost:8080/order-api/order/' + orderId,
-      { headers }
-    );
+    return headers;
   }
 }

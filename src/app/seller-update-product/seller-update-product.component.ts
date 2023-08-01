@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ProductService } from '../services/product.service';
-import { Product } from '../data-type';
+import { FileHandle, Image, Product, ProductResponse } from '../data-type';
 
 @Component({
   selector: 'app-seller-update-product',
@@ -9,7 +9,7 @@ import { Product } from '../data-type';
   styleUrls: ['./seller-update-product.component.css'],
 })
 export class SellerUpdateProductComponent implements OnInit {
-  productData: undefined | Product;
+  productData: undefined | ProductResponse;
   updateProductMessage: string | undefined;
   constructor(
     private route: ActivatedRoute,
@@ -23,12 +23,14 @@ export class SellerUpdateProductComponent implements OnInit {
         this.productData = data;
       });
   }
-  updateProduct(data: Product) {
+
+  updateProduct(data: ProductResponse) {
     let JwtResponse = localStorage.getItem('JwtResponse');
     let JwtResponseObj = JwtResponse && JSON.parse(JwtResponse);
     data.sellerId = JwtResponseObj.seller.sellerId;
     if (this.productData) {
       data.productId = this.productData.productId;
+      data.productImages = this.productData.productImages;
     }
     this.productService.updateProduct(data).subscribe((result) => {
       console.log(result);

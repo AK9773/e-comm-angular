@@ -43,14 +43,13 @@
         ngModel="{{ productData?.category }}"
         name="category"
       />
-      <input
+      <!-- <input
         class="form-control"
         required
-        type="text"
-        placeholder="Enter Product Image url"
-        ngModel="{{ productData?.image }}"
-        name="image"
-      />
+        type="file"
+        placeholder="Select Images"
+        (change)="onSelectedFile($event)"
+      /> -->
       <textarea
         class="form-control"
         required

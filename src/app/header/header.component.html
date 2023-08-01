@@ -1,9 +1,184 @@
-<header class="navbar-box d-flex justify-content-center row p-3">
+<nav class="navbar navbar-expand-lg bg-body-tertiary navbar-box">
+  <div class="container-fluid">
+    <a class="navbar-brand" routerLink="/home"
+      ><img
+        class="logo-image"
+        src="../../assets/images/Photo_1690481984148.jpg"
+        alt="ShopNow"
+    /></a>
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul
+        *ngIf="menuType === 'default'"
+        class="navbar-nav me-auto mb-2 mb-lg-0"
+      >
+        <li class="nav-item me-2">
+          <!-- <a class="nav-link active" aria-current="page" href="#">Home</a> -->
+          <a
+            class="nav-link"
+            aria-current="page"
+            routerLink="/home"
+            routerLinkActive="active"
+            >Home</a
+          >
+        </li>
+        <li class="nav-item me-2">
+          <!-- <a class="nav-link active" aria-current="page" href="#">Home</a> -->
+          <a
+            class="nav-link"
+            aria-current="page"
+            routerLink="/seller"
+            routerLinkActive="active"
+            >Seller</a
+          >
+        </li>
+        <li class="nav-item me-2">
+          <!-- <a class="nav-link active" aria-current="page" href="#">Home</a> -->
+          <a
+            class="nav-link"
+            aria-current="page"
+            routerLink="/login"
+            routerLinkActive="active"
+            >Login</a
+          >
+        </li>
+        <li class="nav-item me-2">
+          <!-- <a class="nav-link active" aria-current="page" href="#">Home</a> -->
+          <a
+            class="nav-link"
+            aria-current="page"
+            [routerLink]="cartItems > 0 ? '/cart' : null"
+            routerLinkActive="active"
+            >Cart({{ cartItems }})</a
+          >
+        </li>
+      </ul>
+      <ul *ngIf="menuType === 'seller'" class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item me-2">
+          <a
+            class="nav-link"
+            aria-current="page"
+            routerLink="/seller-home"
+            routerLinkActive="active"
+            >Products</a
+          >
+        </li>
+        <li class="nav-item me-2">
+          <a
+            class="nav-link"
+            aria-current="page"
+            routerLink="/seller-add-product"
+            routerLinkActive="active"
+            >Add Product</a
+          >
+        </li>
+        <li class="nav-item me-2">
+          <p class="name">
+            {{ sellerName | titlecase }}
+          </p>
+        </li>
+        <li class="nav-item me-2">
+          <a
+            class="nav-link"
+            aria-current="page"
+            routerLinkActive="active"
+            (click)="logout()"
+            >Logout</a
+          >
+        </li>
+      </ul>
+      <ul *ngIf="menuType === 'user'" class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item me-2">
+          <a
+            class="nav-link"
+            aria-current="page"
+            routerLink="/home"
+            routerLinkActive="active"
+            >Home</a
+          >
+        </li>
+        <li class="nav-item me-2">
+          <a
+            class="nav-link"
+            aria-current="page"
+            [routerLink]="cartItems > 0 ? '/cart' : null"
+            routerLinkActive="active"
+            >Cart({{ cartItems }})</a
+          >
+        </li>
+        <li class="nav-item me-2">
+          <a
+            class="nav-link"
+            aria-current="page"
+            routerLink="/my-order"
+            routerLinkActive="active"
+            >Orders</a
+          >
+        </li>
+        <li class="nav-item me-2">
+          <p class="name">
+            {{ userName | titlecase }}
+          </p>
+        </li>
+        <li class="nav-item me-2">
+          <a
+            class="nav-link"
+            aria-current="page"
+            routerLinkActive="active"
+            (click)="logout()"
+            >Logout</a
+          >
+        </li>
+      </ul>
+      <form role="search" *ngIf="menuType !== 'seller'">
+        <div class="d-flex">
+          <input
+            class="form-control me-2"
+            type="search"
+            #searchInput
+            (keyup)="searchProduct($event)"
+            (blur)="blurSearch()"
+            placeholder="Search..."
+            aria-label="Search"
+          />
+          <button
+            class="btn btn-outline-success button-box"
+            (click)="search(searchInput.value)"
+          >
+            Search
+          </button>
+        </div>
+        <div *ngIf="searchResult" class="suggested-result">
+          <div *ngFor="let item of searchResult" class="item">
+            {{ item.productName }}
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</nav>
+
+<!-- <header class="navbar-box d-flex justify-content-center p-3">
   <div
     class="col-12 col-md-6 d-flex justify-content-center justify-content-md-start"
   >
     <div class="logo col-4 col-md-3">
-      <a routerLink="/home">E-comm</a>
+      <a routerLink="/home"
+        ><img
+          class="logo-image"
+          src="../../assets/images/Photo_1690481984148.jpg"
+          alt="ShopNow"
+      /></a>
     </div>
     <div class="search-box col-8 col-md-8">
       <form *ngIf="menuType !== 'seller'">
@@ -114,4 +289,4 @@
       </li>
     </ul>
   </div>
-</header>
+</header> -->

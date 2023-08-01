@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ProductService } from '../services/product.service';
-import { Cart, Product } from '../data-type';
+import { Cart, Image, Product, ProductResponse } from '../data-type';
 
 @Component({
   selector: 'app-product-details',
@@ -9,10 +9,13 @@ import { Cart, Product } from '../data-type';
   styleUrls: ['./product-details.component.css'],
 })
 export class ProductDetailsComponent implements OnInit {
-  product: Product | undefined;
+  product: ProductResponse | undefined;
   quantityProduct: number = 1;
   addCart: boolean = true;
-  cartData: Product | undefined;
+  cartData: Cart | undefined;
+  productImage: Image[] = [];
+  index: number = 0;
+  length: number = 0;
   constructor(
     private activatedRoute: ActivatedRoute,
     private productService: ProductService,
@@ -24,6 +27,8 @@ export class ProductDetailsComponent implements OnInit {
     id &&
       this.productService.getProduct(+id).subscribe((result) => {
         this.product = result;
+        this.length = result.productImages.length;
+        this.productImage = result.productImages;
 
         let cartData = localStorage.getItem('localCart');
         if (id && cartData) {
@@ -40,6 +45,21 @@ export class ProductDetailsComponent implements OnInit {
     this.loadDetails();
   }
 
+  left() {
+    if (this.index > 0) {
+      this.index = this.index - 1;
+    } else {
+      this.index = this.length - 1;
+    }
+  }
+  right() {
+    if (this.index < this.length - 1) {
+      this.index = this.index + 1;
+    } else {
+      this.index = 0;
+    }
+  }
+
   quantity(val: string) {
     if (val === 'min' && this.quantityProduct > 0) {
       this.quantityProduct = this.quantityProduct - 1;
@@ -51,24 +71,31 @@ export class ProductDetailsComponent implements OnInit {
   addToCart() {
     if (this.product) {
       this.product.quantity = this.quantityProduct;
+      let cartData: Cart = {
+        productName: this.product.productName,
+        price: this.product.price,
+        color: this.product.color,
+        category: this.product.category,
+        description: this.product.description,
+        quantity: this.product.quantity,
+        productId: this.product.productId,
+        cartId: undefined,
+        imageName: this.product.productImages[0].imageName,
+      };
       if (!localStorage.getItem('JwtResponse')) {
-        this.productService.localAddToCart(this.product);
+        this.productService.localAddToCart(cartData);
         this.addCart = false;
       } else {
         let JwtResponse = localStorage.getItem('JwtResponse');
         let JwtResponseObj = JwtResponse && JSON.parse(JwtResponse);
         let userId = JwtResponseObj.user.userId;
-        let cartData: Cart = {
-          ...this.product,
-          productId: this.product.productId,
-          userId: userId,
-          cartId: undefined,
-        };
-        console.log(cartData);
 
-        this.productService.addToCart(cartData).subscribe((result) => {
+        let cart: Cart = {
+          ...cartData,
+          userId: userId,
+        };
+        this.productService.addToCart(cart).subscribe((result) => {
           if (result) {
-            console.log(result);
             this.productService.CartItemList(userId);
             this.addCart = false;
           }
@@ -147,8 +174,8 @@ export class ProductDetailsComponent implements OnInit {
       this.productService.CartItemList(userId);
       let id = this.activatedRoute.snapshot.paramMap.get('id');
       this.productService.cartData.subscribe((result) => {
-        let item: Product[] = result.filter(
-          (product: Product) => id?.toString() === product.productId?.toString()
+        let item: Cart[] = result.filter(
+          (cart: Cart) => id?.toString() === cart.productId?.toString()
         );
         if (item.length) {
           this.addCart = false;

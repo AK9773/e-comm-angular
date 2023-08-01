@@ -3,9 +3,12 @@
   width: 80%;
   margin: 10px auto;
   border: 2px solid red;
+  border-radius: 0.5rem;
+  background-color: rgb(210, 245, 245);
 }
 .product-image {
   height: 20rem;
+  width: 80%;
   object-fit: contain;
   margin-top: 5px;
   margin-bottom: 5px;
@@ -36,6 +39,7 @@
 .button-box {
   width: 3rem;
 }
+
 .cart-button {
   width: 8rem;
   background-color: aqua;

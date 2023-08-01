@@ -45,10 +45,10 @@
       <input
         class="form-control"
         required
-        type="text"
-        placeholder="Enter Product Image url"
-        ngModel
-        name="image"
+        type="file"
+        multiple
+        placeholder="choose images"
+        (change)="onSelectedFile($event)"
       />
       <textarea
         class="form-control"

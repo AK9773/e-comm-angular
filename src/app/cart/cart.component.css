@@ -1,7 +1,7 @@
 .cart-page {
   width: 80%;
   margin: auto;
-  margin-top: 1rem;
+  padding-top: 2rem;
 }
 
 .product-details {
@@ -12,6 +12,7 @@
   list-style: none;
   border: 3px solid rgba(137, 43, 226, 0.278);
   border-radius: 1rem;
+  background-color: rgb(210, 245, 245);
 }
 .product-details li img {
   height: 8rem;
@@ -26,6 +27,7 @@
 }
 .cart-summary ul {
   list-style: none;
+  background-color: rgb(223, 243, 247);
   border: 2px solid rgba(0, 0, 0, 0.138);
   border-radius: 0.5rem;
   padding-right: 2rem;
