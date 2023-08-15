@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ProductService } from '../services/product.service';
 import { Order } from '../data-type';
+import { UserService } from '../services/user.service';
 
 @Component({
   selector: 'app-my-order',
@@ -12,11 +13,22 @@ export class MyOrderComponent implements OnInit {
   JwtResponse = localStorage.getItem('JwtResponse');
   JwtResponseObj = this.JwtResponse && JSON.parse(this.JwtResponse);
   user = this.JwtResponseObj && this.JwtResponseObj.user;
-  userId = this.user && this.user.userId;
+  userId: number | undefined;
   orderMessage: string | undefined;
-  constructor(private productService: ProductService) {}
+
+  constructor(
+    private productService: ProductService,
+    private userService: UserService
+  ) {}
   ngOnInit(): void {
-    this.getOrderList();
+    if (localStorage.getItem('JwtResponse')) {
+      this.userService.getUserId().subscribe((result) => {
+        if (result) {
+          this.userId = result;
+          this.getOrderList();
+        }
+      });
+    }
   }
 
   cancelOrder(orderId: number | undefined) {
@@ -28,11 +40,13 @@ export class MyOrderComponent implements OnInit {
   }
 
   getOrderList() {
-    this.productService.orderData(this.userId).subscribe((result) => {
-      this.orderData = result;
-      if (result.length === 0) {
-        this.orderMessage = 'No Order Data Available';
-      }
-    });
+    if (this.userId) {
+      this.productService.orderData(this.userId).subscribe((result) => {
+        this.orderData = result;
+        if (result.length === 0) {
+          this.orderMessage = 'No Order Data Available';
+        }
+      });
+    }
   }
 }

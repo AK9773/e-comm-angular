@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ProductService } from '../services/product.service';
 import { Cart, Image, Product, ProductResponse } from '../data-type';
+import { UserService } from '../services/user.service';
 
 @Component({
   selector: 'app-product-details',
@@ -16,12 +17,20 @@ export class ProductDetailsComponent implements OnInit {
   productImage: Image[] = [];
   index: number = 0;
   length: number = 0;
+  userId: number | undefined;
   constructor(
     private activatedRoute: ActivatedRoute,
     private productService: ProductService,
+    private userService: UserService,
     private router: Router
   ) {}
   ngOnInit(): void {
+    if (localStorage.getItem('JwtResponse')) {
+      this.userService.getUserId().subscribe((result) => {
+        this.userId = result;
+        this.loadDetails();
+      });
+    }
     let id = this.activatedRoute.snapshot.paramMap.get('id');
 
     id &&
@@ -42,7 +51,6 @@ export class ProductDetailsComponent implements OnInit {
           }
         }
       });
-    this.loadDetails();
   }
 
   left() {
@@ -86,17 +94,13 @@ export class ProductDetailsComponent implements OnInit {
         this.productService.localAddToCart(cartData);
         this.addCart = false;
       } else {
-        let JwtResponse = localStorage.getItem('JwtResponse');
-        let JwtResponseObj = JwtResponse && JSON.parse(JwtResponse);
-        let userId = JwtResponseObj.user.userId;
-
         let cart: Cart = {
           ...cartData,
-          userId: userId,
+          userId: this.userId,
         };
         this.productService.addToCart(cart).subscribe((result) => {
-          if (result) {
-            this.productService.CartItemList(userId);
+          if (result && this.userId) {
+            this.productService.CartItemList(this.userId);
             this.addCart = false;
           }
         });
@@ -109,9 +113,6 @@ export class ProductDetailsComponent implements OnInit {
       this.addCart = true;
     }
     if (localStorage.getItem('JwtResponse')) {
-      let JwtResponse = localStorage.getItem('JwtResponse');
-      let JwtResponseObj = JwtResponse && JSON.parse(JwtResponse);
-      let userId = JwtResponseObj.user.userId;
       if (this.cartData) {
         this.productService
           .cartItemByProductId(this.cartData.productId)
@@ -120,8 +121,8 @@ export class ProductDetailsComponent implements OnInit {
               this.productService
                 .removeFromDBCart(result[0].cartId)
                 .subscribe((result) => {
-                  if (result) {
-                    this.productService.CartItemList(userId);
+                  if (result && this.userId) {
+                    this.productService.CartItemList(this.userId);
                     this.addCart = true;
                   }
                 });
@@ -167,11 +168,8 @@ export class ProductDetailsComponent implements OnInit {
   }
 
   loadDetails() {
-    let JwtResponse = localStorage.getItem('JwtResponse');
-    let JwtResponseObj = JwtResponse && JSON.parse(JwtResponse);
-    if (JwtResponseObj && JwtResponseObj.user) {
-      let userId = JwtResponseObj.user.userId;
-      this.productService.CartItemList(userId);
+    if (this.userId) {
+      this.productService.CartItemList(this.userId);
       let id = this.activatedRoute.snapshot.paramMap.get('id');
       this.productService.cartData.subscribe((result) => {
         let item: Cart[] = result.filter(

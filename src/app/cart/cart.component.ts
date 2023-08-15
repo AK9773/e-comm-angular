@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ProductService } from '../services/product.service';
 import { Cart, CartSummary, Product } from '../data-type';
 import { Router } from '@angular/router';
+import { UserService } from '../services/user.service';
 
 @Component({
   selector: 'app-cart',
@@ -10,6 +11,7 @@ import { Router } from '@angular/router';
 })
 export class CartComponent implements OnInit {
   cartItems: Cart[] | undefined;
+  userId: number | undefined;
   userLogin: boolean = true;
   checkoutButton: boolean = false;
   cartSummary: CartSummary = {
@@ -20,9 +22,21 @@ export class CartComponent implements OnInit {
     total: 0,
   };
 
-  constructor(private productService: ProductService, private router: Router) {}
+  constructor(
+    private productService: ProductService,
+    private userService: UserService,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
+    if (localStorage.getItem('JwtResponse')) {
+      this.userService.getUserId().subscribe((result) => {
+        if (result) {
+          this.userId = result;
+        }
+      });
+    }
+
     this.loadDetails();
   }
 
@@ -36,9 +50,8 @@ export class CartComponent implements OnInit {
     if (JwtResponseObj && JwtResponseObj.user) {
       if (this.cartItems && cartId) {
         this.productService.removeFromDBCart(cartId).subscribe((result) => {
-          if (result) {
-            let userId = JwtResponseObj.user.userId;
-            this.productService.CartItemList(userId);
+          if (result && this.userId) {
+            this.productService.CartItemList(this.userId);
             this.loadDetails();
           }
         });
@@ -55,7 +68,6 @@ export class CartComponent implements OnInit {
     let JwtResponse = localStorage.getItem('JwtResponse');
     let JwtResponseObj = JwtResponse && JSON.parse(JwtResponse);
     if (JwtResponseObj && JwtResponseObj.user) {
-      // let user = localStorage.getItem('user');
       this.productService.cartItems().subscribe((result) => {
         if (result) {
           this.cartItems = result;

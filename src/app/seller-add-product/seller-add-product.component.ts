@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { ProductService } from '../services/product.service';
 import { FileHandle, Product } from '../data-type';
 import { Router } from '@angular/router';
+import { SellerService } from '../services/seller.service';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-seller-add-product',
@@ -11,16 +13,33 @@ import { Router } from '@angular/router';
 export class SellerAddProductComponent implements OnInit {
   addProductMessage: string | undefined = '';
   productImages: FileHandle[] = [];
-  constructor(private productService: ProductService, private router: Router) {}
-  ngOnInit(): void {}
+  sellerId: number | undefined;
+  addProduct!: FormGroup;
+  constructor(
+    private productService: ProductService,
+    private sellerService: SellerService,
+    private router: Router
+  ) {}
+  ngOnInit(): void {
+    this.addProduct = new FormGroup({
+      productName: new FormControl('', [Validators.required]),
+      price: new FormControl('', [Validators.required]),
+      color: new FormControl('', [Validators.required]),
+      category: new FormControl('', [Validators.required]),
+      description: new FormControl('', [Validators.required]),
+    });
+    this.sellerService.getSellerId().subscribe((result) => {
+      if (result) {
+        this.sellerId = result;
+      }
+    });
+  }
 
-  submitProduct(data: any) {
-    let JwtResponse = localStorage.getItem('JwtResponse');
-    let JwtResponseObj = JwtResponse && JSON.parse(JwtResponse);
-    let sellerId = JwtResponseObj.seller.sellerId;
+  submitProduct() {
+    let data = this.addProduct.value;
     let productData: Product = {
       ...data,
-      sellerId,
+      sellerId: this.sellerId,
       productImages: this.productImages,
     };
     const formData = this.prepareFormData(productData);

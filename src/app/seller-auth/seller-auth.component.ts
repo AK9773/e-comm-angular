@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { SellerService } from '../services/seller.service';
 import { Router } from '@angular/router';
 import { Seller, SellerLogin } from '../data-type';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-seller-auth',
@@ -15,12 +16,27 @@ export class SellerAuthComponent {
   isLogin: boolean = false;
   authError: string = '';
   signUpMessage: string | undefined;
+  sellerSignUp!: FormGroup;
+  sellerLogin!: FormGroup;
 
   ngOnInit(): void {
+    this.sellerLogin = new FormGroup({
+      sellerName: new FormControl('', Validators.required),
+      password: new FormControl('', Validators.required),
+    });
+    this.sellerSignUp = new FormGroup({
+      sellerName: new FormControl('', Validators.required),
+      password: new FormControl('', [
+        Validators.required,
+        Validators.minLength(8),
+      ]),
+      name: new FormControl('', Validators.required),
+    });
     this.sellerService.reloadSeller();
   }
 
-  signUp(data: Seller): void {
+  signUp(): void {
+    let data: Seller = this.sellerSignUp.value;
     this.sellerService.sellerSignUp(data).subscribe((result) => {
       if (result) {
         this.signUpMessage = 'Sign Up Successfull';
@@ -37,7 +53,8 @@ export class SellerAuthComponent {
     });
   }
 
-  login(data: SellerLogin): void {
+  login(): void {
+    let data: SellerLogin = this.sellerLogin.value;
     this.sellerService.sellerLogin(data).subscribe(
       (result) => {
         if (result) {

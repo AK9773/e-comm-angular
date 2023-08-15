@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ProductService } from '../services/product.service';
 import { Product, ProductResponse } from '../data-type';
 import { faTrash, faEdit } from '@fortawesome/free-solid-svg-icons';
+import { SellerService } from '../services/seller.service';
 
 @Component({
   selector: 'app-seller-home',
@@ -14,9 +15,18 @@ export class SellerHomeComponent implements OnInit {
   deleteIcon = faTrash;
   editIcon = faEdit;
   productListMessage: string | undefined;
-  constructor(private productService: ProductService) {}
+  sellerId: number | undefined;
+  constructor(
+    private productService: ProductService,
+    private sellerService: SellerService
+  ) {}
   ngOnInit(): void {
-    this.list();
+    this.sellerService.getSellerId().subscribe((sellerId) => {
+      if (sellerId) {
+        this.sellerId = sellerId;
+        this.list();
+      }
+    });
   }
   productDelete(id: number) {
     this.productService.deleteProduct(id).subscribe(() => {
@@ -29,17 +39,17 @@ export class SellerHomeComponent implements OnInit {
   }
 
   list() {
-    let JwtResponse = localStorage.getItem('JwtResponse');
-    let JwtResponseObj = JwtResponse && JSON.parse(JwtResponse);
-    this.productService
-      .sellerProductList(JwtResponseObj.seller.sellerId)
-      .subscribe((result) => {
-        if (result) {
-          this.productList = result;
-        }
-        if (result.length === 0) {
-          this.productListMessage = 'No Product Added';
-        }
-      });
+    if (this.sellerId) {
+      this.productService
+        .sellerProductList(this.sellerId)
+        .subscribe((products) => {
+          if (products) {
+            this.productList = products;
+          }
+          if (products.length === 0) {
+            this.productListMessage = 'No Product Added';
+          }
+        });
+    }
   }
 }

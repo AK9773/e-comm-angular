@@ -1,13 +1,16 @@
-<div class="container-sm text-center mt-5 form-style">
-  <h1>Add Product</h1>
-  <div *ngIf="addProductMessage" class="alert alert-success" role="alert">
+<div class="container-sm mt-5 form-style">
+  <h1 class="text-center">Add Product</h1>
+  <div
+    *ngIf="addProductMessage"
+    class="alert alert-success text-center"
+    role="alert"
+  >
     {{ addProductMessage }}
   </div>
   <div class="row justify-content-center">
     <form
-      #addProduct="ngForm"
-      #sellerSignUp="ngForm"
-      (ngSubmit)="submitProduct(addProduct.value)"
+      [formGroup]="addProduct"
+      (ngSubmit)="submitProduct()"
       class="row g-3 needs-validation"
     >
       <input
@@ -15,33 +18,61 @@
         required
         type="text"
         placeholder="Enter Product Name"
-        ngModel
-        name="productName"
+        formControlName="productName"
       />
+      <span
+        class="text-danger"
+        *ngIf="
+          addProduct.controls['productName'].hasError('required') &&
+          addProduct.controls['productName'].touched
+        "
+        >Enter Product Name</span
+      >
+
       <input
         class="form-control"
         required
         type="text"
         placeholder="Enter Product Price"
         ngModel
-        name="price"
+        formControlName="price"
       />
+      <span
+        class="text-danger"
+        *ngIf="
+          addProduct.controls['price'].hasError('required') &&
+          addProduct.controls['price'].touched
+        "
+        >Enter Product Price</span
+      >
       <input
         class="form-control"
-        required
         type="text"
         placeholder="Enter Product Color"
-        ngModel
-        name="color"
+        formControlName="color"
       />
+      <span
+        class="text-danger"
+        *ngIf="
+          addProduct.controls['color'].hasError('required') &&
+          addProduct.controls['color'].touched
+        "
+        >Enter Product Color</span
+      >
       <input
         class="form-control"
-        required
         type="text"
         placeholder="Enter Product Category"
-        ngModel
-        name="category"
+        formControlName="category"
       />
+      <span
+        class="text-danger"
+        *ngIf="
+          addProduct.controls['category'].hasError('required') &&
+          addProduct.controls['category'].touched
+        "
+        >Enter Product Category</span
+      >
       <input
         class="form-control"
         required
@@ -52,14 +83,25 @@
       />
       <textarea
         class="form-control"
-        required
         type="text"
         placeholder="Description"
-        ngModel
-        name="description"
+        formControlName="description"
       ></textarea>
+      <span
+        class="text-danger"
+        *ngIf="
+          addProduct.controls['description'].hasError('required') &&
+          addProduct.controls['description'].touched
+        "
+        >Enter Product Description</span
+      >
 
-      <button class="btn btn-primary button-style">Add</button>
+      <button
+        [disabled]="addProduct.invalid"
+        class="btn btn-primary button-style"
+      >
+        Add
+      </button>
     </form>
   </div>
 </div>

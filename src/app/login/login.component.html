@@ -1,40 +1,63 @@
-<div *ngIf="!showLogin" class="container-sm text-center form-style pt-5">
-  <h1>User Sign-Up</h1>
+<div *ngIf="!showLogin" class="container-sm form-style pt-5">
+  <h1 class="text-center">User Sign-Up</h1>
   <div *ngIf="signUpMessage" class="alert alert-success" role="alert">
     {{ signUpMessage }}
   </div>
   <div class="row justify-content-center">
     <form
-      #userSignUp="ngForm"
-      (ngSubmit)="signUp(userSignUp.value)"
+      [formGroup]="userSignUp"
+      (ngSubmit)="signUp()"
       class="row g-3 needs-validation"
     >
       <input
         class="form-control"
-        required
         type="text"
         placeholder="Enter userID here"
-        ngModel
-        name="userName"
+        formControlName="userName"
       />
+      <span
+        class="text-danger"
+        *ngIf="
+          userSignUp.controls['userName'].hasError('required') &&
+          userSignUp.controls['userName'].touched
+        "
+        >User Name is required</span
+      >
       <input
         class="form-control"
-        required
         type="text"
         placeholder="Enter full Name Here.."
-        ngModel
-        name="name"
+        formControlName="name"
       />
+      <span
+        class="text-danger"
+        *ngIf="
+          userSignUp.controls['name'].hasError('required') &&
+          userSignUp.controls['name'].touched
+        "
+        >Full Name is required</span
+      >
       <input
         class="form-control"
-        required
         type="password"
         placeholder="Enter Password"
-        ngModel
-        name="password"
+        formControlName="password"
       />
+      <span
+        class="text-danger"
+        *ngIf="
+          userSignUp.controls['password'].hasError('required') &&
+          userSignUp.controls['password'].touched
+        "
+        >Password is required</span
+      >
 
-      <button class="btn btn-primary button-style">Sign-Up</button>
+      <button
+        [disabled]="userSignUp.invalid"
+        class="btn btn-primary button-style"
+      >
+        Sign-Up
+      </button>
       <a class="toggle" (click)="openLogin()"
         >Already have Account? Click to Login</a
       >
@@ -44,39 +67,50 @@
 
 <!-- Login Area -->
 
-<div *ngIf="showLogin" class="container-sm text-center pt-5 form-style">
-  <h1>User Login</h1>
+<div *ngIf="showLogin" class="container-sm pt-5 form-style">
+  <h1 class="text-center">User Login</h1>
   <h5 class="error" *ngIf="isLogin">{{ authError }}</h5>
   <div class="row justify-content-center">
     <form
-      #userLogin="ngForm"
-      (ngSubmit)="login(userLogin.value)"
+      [formGroup]="userLogin"
+      (ngSubmit)="login()"
       class="row g-3 needs-validation"
     >
       <input
         class="form-control"
-        required
         type="text"
         placeholder="Enter userId Id"
-        ngModel
-        name="userName"
-        required
+        formControlName="userName"
       />
+      <span
+        class="text-danger"
+        *ngIf="
+          userLogin.controls['userName'].hasError('required') &&
+          userLogin.controls['userName'].touched
+        "
+        >User Name is required</span
+      >
       <input
         class="form-control"
-        required
         type="password"
         placeholder="Enter Password"
-        ngModel
-        name="password"
-        #password="ngModel"
-        required
+        formControlName="password"
       />
-      <span *ngIf="password.invalid && password.touched"
+      <span
+        class="text-danger"
+        *ngIf="
+          userLogin.controls['password'].hasError('required') &&
+          userLogin.controls['password'].touched
+        "
         >Password is required</span
       >
 
-      <button class="btn btn-primary button-style">Login</button>
+      <button
+        [disabled]="userLogin.invalid"
+        class="btn btn-primary button-style"
+      >
+        Login
+      </button>
       <a class="toggle" (click)="openSignUp()"
         >Don't have Account? Click to SignUp</a
       >

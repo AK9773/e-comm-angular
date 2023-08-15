@@ -128,15 +128,11 @@ export class ProductService {
   }
 
   cartItems() {
-    let JwtResponse = localStorage.getItem('JwtResponse');
-    let JwtResponseObj = JwtResponse && JSON.parse(JwtResponse);
-    let headers = new HttpHeaders().set(
-      'Authorization',
-      `Bearer ${JwtResponseObj.jwtToken}`
-    );
+    let headers = this.headers();
+    let JwtResponseObject = this.getJwtResponseObj();
     return this.http.get<Cart[]>(
       'http://localhost:8080/cart-api/cart/userId=' +
-        JwtResponseObj.user.userId,
+        JwtResponseObject.user.userId,
       { headers }
     );
   }
@@ -177,12 +173,17 @@ export class ProductService {
   }
 
   headers() {
-    let JwtResponse = localStorage.getItem('JwtResponse');
-    let JwtResponseObj = JwtResponse && JSON.parse(JwtResponse);
+    let JwtResponseObj = this.getJwtResponseObj();
     let headers = new HttpHeaders().set(
       'Authorization',
       `Bearer ${JwtResponseObj.jwtToken}`
     );
     return headers;
+  }
+
+  getJwtResponseObj() {
+    let JwtResponse = localStorage.getItem('JwtResponse');
+    let JwtResponseObj = JwtResponse && JSON.parse(JwtResponse);
+    return JwtResponseObj;
   }
 }

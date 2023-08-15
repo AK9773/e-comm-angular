@@ -3,6 +3,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { JwtResponse, Seller, SellerLogin } from '../data-type';
 import { BehaviorSubject } from 'rxjs';
 import { Router } from '@angular/router';
+import { ProductService } from './product.service';
 
 @Injectable({
   providedIn: 'root',
@@ -10,7 +11,11 @@ import { Router } from '@angular/router';
 export class SellerService {
   isSellerLoggedIn = new BehaviorSubject<boolean>(false);
 
-  constructor(private http: HttpClient, private router: Router) {}
+  constructor(
+    private http: HttpClient,
+    private router: Router,
+    private productService: ProductService
+  ) {}
 
   sellerSignUp(data: Seller) {
     return this.http.post('http://localhost:8080/seller-api/seller', data);
@@ -29,6 +34,13 @@ export class SellerService {
     return this.http.post<JwtResponse>(
       'http://localhost:8080/authenticate/seller',
       data
+    );
+  }
+
+  getSellerId() {
+    let JwtResponseObj = this.productService.getJwtResponseObj();
+    return this.http.get<number>(
+      'http://localhost:8080/sellerId/' + JwtResponseObj.jwtToken
     );
   }
 }

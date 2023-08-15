@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { Cart, CartSummary, Order } from '../data-type';
 import { ProductService } from '../services/product.service';
 import { Router } from '@angular/router';
+import { UserService } from '../services/user.service';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-checkout',
@@ -17,12 +19,31 @@ export class CheckoutComponent implements OnInit {
     total: 0,
   };
   cartData: Cart[] | undefined;
+  userId: number | undefined;
 
-  constructor(private productService: ProductService, private router: Router) {}
+  checkoutForm!: FormGroup;
+
+  constructor(
+    private productService: ProductService,
+    private userService: UserService,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
-    let JwtResponse = localStorage.getItem('JwtResponse');
-    let JwtResponseObj = JwtResponse && JSON.parse(JwtResponse);
+    this.checkoutForm = new FormGroup({
+      email: new FormControl<string>('', [
+        Validators.required,
+        Validators.email,
+      ]),
+      mobile: new FormControl<string>('', [Validators.required]),
+      address: new FormControl<string>('', [Validators.required]),
+    });
+    if (localStorage.getItem('JwtResponse')) {
+      this.userService.getUserId().subscribe((result) => {
+        this.userId = result;
+      });
+    }
+    let JwtResponseObj = this.productService.getJwtResponseObj();
     if (JwtResponseObj && JwtResponseObj.user) {
       this.productService.cartItems().subscribe((result) => {
         if (result) {
@@ -35,24 +56,26 @@ export class CheckoutComponent implements OnInit {
     }
   }
 
-  orderNow(data: { address: string; mobile: string; email: string }) {
-    let JwtResponse = localStorage.getItem('JwtResponse');
-    let JwtResponseObj = JwtResponse && JSON.parse(JwtResponse);
-    let userId: number = JwtResponseObj.user.userId;
-    let order: Order = {
-      ...data,
-      userId,
-      totalPrice: this.cartSummary.total,
-      orderId: undefined,
-    };
-    this.cartData?.forEach((item) => {
-      setTimeout(() => {
-        item.cartId && this.productService.deleteCartItems(item.cartId);
-      }, 600);
-    });
-    this.productService.orderNow(order).subscribe((result) => {
-      this.router.navigate(['my-order']);
-    });
+  orderNow() {
+    let data = this.checkoutForm.value;
+    if (this.userId) {
+      if (this.checkoutForm.value.address) {
+        let order: Order = {
+          ...data,
+          userId: this.userId,
+          totalPrice: this.cartSummary.total,
+          orderId: undefined,
+        };
+        this.cartData?.forEach((item) => {
+          setTimeout(() => {
+            item.cartId && this.productService.deleteCartItems(item.cartId);
+          }, 600);
+        });
+        this.productService.orderNow(order).subscribe((result) => {
+          this.router.navigate(['my-order']);
+        });
+      }
+    }
   }
 
   cartSumaryDetails() {

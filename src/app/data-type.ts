@@ -1,13 +1,13 @@
 import { SafeUrl } from '@angular/platform-browser';
 
 export interface Seller {
-  sellerId: undefined | number;
+  sellerId?: number;
   name: string;
   password: string;
   sellerName: string;
 }
 export interface User {
-  userId: undefined | number;
+  userId?: number;
   name: string;
   password: string;
   userName: string;
@@ -38,7 +38,7 @@ export interface Cart {
   quantity: undefined | number;
   productId: number;
   cartId: number | undefined;
-  userId?: number;
+  userId?: number | undefined;
 }
 
 export interface CartSummary {
@@ -89,5 +89,5 @@ export interface ProductResponse {
   productImages: Image[];
   description: string;
   quantity: undefined | number;
-  sellerId: number | undefined;
+  sellerId: number;
 }

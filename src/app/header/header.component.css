@@ -8,8 +8,8 @@
 }
 
 .active {
-  background-color: #03ffea;
-  color: rgb(24, 21, 21);
+  background-color: #43f395;
+  color: rgb(0, 0, 0);
   border: 1px solid rgb(68, 255, 0);
   padding: 5px;
   border-radius: 5px;
@@ -33,6 +33,11 @@
 .search-box {
   border-radius: 10px;
 }
+a {
+  color: black;
+  z-index: 2;
+  font-size: 1.2rem;
+}
 .input-box {
   padding-left: 2rem;
   border: none;
@@ -54,4 +59,10 @@
 }
 .name {
   padding-top: 0.5rem;
+  font-size: 1.2rem;
+  z-index: 2;
+}
+
+.logout-button {
+  cursor: pointer;
 }

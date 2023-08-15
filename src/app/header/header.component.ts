@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ProductService } from '../services/product.service';
 import { Product, ProductResponse } from '../data-type';
+import { UserService } from '../services/user.service';
 
 @Component({
   selector: 'app-header',
@@ -15,7 +16,11 @@ export class HeaderComponent implements OnInit {
   searchResult: ProductResponse[] | undefined;
   cartItems: number = 0;
 
-  constructor(private router: Router, private productService: ProductService) {}
+  constructor(
+    private router: Router,
+    private userService: UserService,
+    private productService: ProductService
+  ) {}
 
   ngOnInit(): void {
     this.reloadHeader();
@@ -28,9 +33,6 @@ export class HeaderComponent implements OnInit {
     this.menuType = 'default';
     this.router.navigate(['/home']);
     this.productService.cartData.emit([]);
-    this.productService.cartData.subscribe((result) => {
-      console.log(result);
-    });
   }
 
   searchProduct(query: KeyboardEvent) {
@@ -75,7 +77,13 @@ export class HeaderComponent implements OnInit {
         if (JwtResponseObj && JwtResponseObj.user) {
           this.menuType = 'user';
           this.userName = JwtResponseObj.user.name;
-          this.productService.CartItemList(JwtResponseObj.user.userId);
+          if (localStorage.getItem('JwtResponse')) {
+            this.userService.getUserId().subscribe((result) => {
+              if (result) {
+                this.productService.CartItemList(result);
+              }
+            });
+          }
         }
       }
       let cartData = localStorage.getItem('localCart');

@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { Cart, Product, ProductResponse, User, UserLogin } from '../data-type';
 import { ProductService } from '../services/product.service';
 import { HeaderComponent } from '../header/header.component';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-login',
@@ -21,12 +22,25 @@ export class LoginComponent {
   isLogin: boolean = false;
   authError: string = '';
   signUpMessage: string | undefined;
+  userId: number | undefined;
+  userLogin!: FormGroup;
+  userSignUp!: FormGroup;
 
   ngOnInit(): void {
+    this.userLogin = new FormGroup({
+      userName: new FormControl('', Validators.required),
+      password: new FormControl('', Validators.required),
+    });
+    this.userSignUp = new FormGroup({
+      userName: new FormControl('', Validators.required),
+      password: new FormControl('', Validators.required),
+      name: new FormControl('', Validators.required),
+    });
     this.userService.reloadUser();
   }
 
-  signUp(data: User): void {
+  signUp(): void {
+    let data: User = this.userSignUp.value;
     this.userService.userSignUp(data).subscribe((result) => {
       if (result) {
         this.signUpMessage = 'Sign Up Successfull';
@@ -43,7 +57,8 @@ export class LoginComponent {
     });
   }
 
-  login(data: UserLogin): void {
+  login(): void {
+    let data: UserLogin = this.userLogin.value;
     this.userService.userLogin(data).subscribe(
       (result) => {
         if (result) {
@@ -72,22 +87,24 @@ export class LoginComponent {
 
   localCartToRemoteCart() {
     let localCartData = localStorage.getItem('localCart');
-    let JwtResponse = localStorage.getItem('JwtResponse');
-    let JwtResponseObj = JwtResponse && JSON.parse(JwtResponse);
-    let userId: number =
-      JwtResponseObj && JwtResponseObj.user && JwtResponseObj.user.userId;
-    if (localCartData) {
-      let localCartDataJSON: Cart[] =
-        localCartData && JSON.parse(localCartData);
-      localCartDataJSON.forEach((product: Cart, index) => {
-        let cartData: Cart = {
-          ...product,
-          userId,
-          cartId: undefined,
-        };
-        this.productService.addToCart(cartData).subscribe();
-        if (localCartDataJSON.length === index + 1) {
-          localStorage.removeItem('localCart');
+
+    if (localStorage.getItem('JwtResponse')) {
+      this.userService.getUserId().subscribe((result) => {
+        this.userId = result;
+        if (localCartData) {
+          let localCartDataJSON: Cart[] =
+            localCartData && JSON.parse(localCartData);
+          localCartDataJSON.forEach((product: Cart, index) => {
+            let cartData: Cart = {
+              ...product,
+              userId: this.userId,
+              cartId: undefined,
+            };
+            this.productService.addToCart(cartData).subscribe();
+            if (localCartDataJSON.length === index + 1) {
+              localStorage.removeItem('localCart');
+            }
+          });
         }
       });
     }

@@ -6,60 +6,48 @@
 
   <div class="row justify-content-center">
     <form
-      #addProduct="ngForm"
-      #sellerSignUp="ngForm"
-      (ngSubmit)="updateProduct(addProduct.value)"
+      [formGroup]="addProduct"
+      (ngSubmit)="updateProduct()"
       class="row g-3 needs-validation"
     >
       <input
         class="form-control"
-        required
         type="text"
         placeholder="Enter Product Name"
-        ngModel="{{ productData?.productName }}"
+        formControlName="productName"
         name="productName"
       />
       <input
         class="form-control"
-        required
         type="text"
         placeholder="Enter Product Price"
-        ngModel="{{ productData?.price }}"
-        name="price"
+        formControlName="price"
       />
       <input
         class="form-control"
-        required
         type="text"
         placeholder="Enter Product Color"
-        ngModel="{{ productData?.color }}"
-        name="color"
+        formControlName="color"
       />
       <input
         class="form-control"
-        required
         type="text"
         placeholder="Enter Product Category"
-        ngModel="{{ productData?.category }}"
-        name="category"
+        formControlName="category"
       />
-      <!-- <input
-        class="form-control"
-        required
-        type="file"
-        placeholder="Select Images"
-        (change)="onSelectedFile($event)"
-      /> -->
       <textarea
         class="form-control"
-        required
         type="text"
         placeholder="Description"
-        ngModel="{{ productData?.description }}"
-        name="description"
+        formControlName="description"
       ></textarea>
 
-      <button class="btn btn-primary button-style">Update</button>
+      <button
+        [disabled]="addProduct.invalid"
+        class="btn btn-primary button-style"
+      >
+        Update
+      </button>
     </form>
   </div>
 </div>
