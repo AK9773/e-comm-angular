@@ -43,4 +43,10 @@ export class UserService {
       'http://localhost:8080/userId/' + JwtResponseObj.jwtToken
     );
   }
+
+  changePassword(id: number, password: string) {
+    return this.http.get(
+      `http://localhost:8080/user-api/user/${id}/${password}`
+    );
+  }
 }

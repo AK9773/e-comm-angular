@@ -147,20 +147,17 @@
             type="search"
             #searchInput
             (keyup)="searchProduct($event)"
-            (blur)="blurSearch()"
             placeholder="Search..."
             aria-label="Search"
+            (blur)="blurSearch()"
           />
-          <button
-            class="btn btn-outline-success button-box"
-            (click)="search(searchInput.value)"
-          >
+          <button class="bn632-hover bn20" (click)="search(searchInput.value)">
             Search
           </button>
         </div>
         <div *ngIf="searchResult" class="suggested-result">
           <div *ngFor="let item of searchResult" class="item">
-            <a routerLink="/details/{{ item.productName }}">{{
+            <a routerLink="/details/{{ item.productId }}">{{
               item.productName
             }}</a>
           </div>

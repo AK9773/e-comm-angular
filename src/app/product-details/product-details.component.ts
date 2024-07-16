@@ -3,13 +3,15 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ProductService } from '../services/product.service';
 import { Cart, Image, Product, ProductResponse } from '../data-type';
 import { UserService } from '../services/user.service';
+import { Unsubscribe } from '../services/unsubscribe.class';
+import { takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-product-details',
   templateUrl: './product-details.component.html',
   styleUrls: ['./product-details.component.css'],
 })
-export class ProductDetailsComponent implements OnInit {
+export class ProductDetailsComponent extends Unsubscribe implements OnInit {
   product: ProductResponse | undefined;
   quantityProduct: number = 1;
   addCart: boolean = true;
@@ -23,34 +25,42 @@ export class ProductDetailsComponent implements OnInit {
     private productService: ProductService,
     private userService: UserService,
     private router: Router
-  ) {}
+  ) {
+    super();
+  }
   ngOnInit(): void {
     if (localStorage.getItem('JwtResponse')) {
-      this.userService.getUserId().subscribe((result) => {
-        this.userId = result;
-        this.loadDetails();
-      });
+      this.userService
+        .getUserId()
+        .pipe(takeUntil(this.unsubscribe$))
+        .subscribe((result) => {
+          this.userId = result;
+          this.loadDetails();
+        });
     }
     let id = this.activatedRoute.snapshot.paramMap.get('id');
 
     id &&
-      this.productService.getProduct(+id).subscribe((result) => {
-        this.product = result;
-        this.length = result.productImages.length;
-        this.productImage = result.productImages;
+      this.productService
+        .getProduct(+id)
+        .pipe(takeUntil(this.unsubscribe$))
+        .subscribe((result) => {
+          this.product = result;
+          this.length = result.productImages.length;
+          this.productImage = result.productImages;
 
-        let cartData = localStorage.getItem('localCart');
-        if (id && cartData) {
-          let items = JSON.parse(cartData).filter(
-            (product: Product) => product.productId.toString() === id
-          );
-          if (items.length !== 0) {
-            this.addCart = false;
-          } else {
-            this.addCart = true;
+          let cartData = localStorage.getItem('localCart');
+          if (id && cartData) {
+            let items = JSON.parse(cartData).filter(
+              (product: Product) => product.productId.toString() === id
+            );
+            if (items.length !== 0) {
+              this.addCart = false;
+            } else {
+              this.addCart = true;
+            }
           }
-        }
-      });
+        });
   }
 
   left() {
@@ -98,12 +108,15 @@ export class ProductDetailsComponent implements OnInit {
           ...cartData,
           userId: this.userId,
         };
-        this.productService.addToCart(cart).subscribe((result) => {
-          if (result && this.userId) {
-            this.productService.CartItemList(this.userId);
-            this.addCart = false;
-          }
-        });
+        this.productService
+          .addToCart(cart)
+          .pipe(takeUntil(this.unsubscribe$))
+          .subscribe((result) => {
+            if (result && this.userId) {
+              this.productService.CartItemList(this.userId);
+              this.addCart = false;
+            }
+          });
       }
     }
   }
@@ -116,6 +129,7 @@ export class ProductDetailsComponent implements OnInit {
       if (this.cartData) {
         this.productService
           .cartItemByProductId(this.cartData.productId)
+          .pipe(takeUntil(this.unsubscribe$))
           .subscribe((result) => {
             if (result && result[0].cartId) {
               this.productService
@@ -138,6 +152,7 @@ export class ProductDetailsComponent implements OnInit {
       if (productId) {
         this.productService
           .cartItemByProductId(productId)
+          .pipe(takeUntil(this.unsubscribe$))
           .subscribe((result) => {
             if (result.length == 0) {
               this.addToCart();

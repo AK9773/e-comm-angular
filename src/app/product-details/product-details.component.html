@@ -25,17 +25,23 @@
       <button class="button-box" (click)="quantity('min')">-</button>
       <h4 class="text-box">{{ quantityProduct }}</h4>
       <button class="button-box" (click)="quantity('plus')">+</button>
-      <button *ngIf="addCart" class="cart-button" (click)="addToCart()">
+      <button
+        *ngIf="addCart"
+        class="bn632-hover ms-2 bn20 button_height"
+        (click)="addToCart()"
+      >
         Add to Cart
       </button>
       <button
         *ngIf="!addCart"
-        class="cart-button"
+        class="bn632-hover bn20 ms-2 button_height"
         (click)="removeFromCart(product.productId)"
       >
         Remove
       </button>
     </div>
-    <button class="buy-button" (click)="buyNow()">Buy Now</button>
+    <button class="bn632-hover bn20 mt-3 mb-2 button_height" (click)="buyNow()">
+      Buy Now
+    </button>
   </div>
 </div>

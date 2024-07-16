@@ -20,14 +20,14 @@
           <li class="mt-2">
             <button
               *ngIf="userLogin"
-              class="btn btn-danger"
+              class="bn632-hover bn27"
               (click)="removeFromCart(item.cartId)"
             >
               Remove
             </button>
             <button
               *ngIf="!userLogin"
-              class="btn btn-danger"
+              class="bn632-hover bn27"
               (click)="removeFromCart(item.productId)"
             >
               Remove
@@ -61,14 +61,14 @@
         </li>
         <hr />
         <button
-          class="btn btn-primary mx-auto mb-3"
+          class="bn632-hover bn18 mb-3"
           (click)="checkout()"
           *ngIf="checkoutButton"
         >
           Checkout
         </button>
         <button
-          class="btn btn-primary mx-auto mb-3"
+          class="bn632-hover bn26 mb-3"
           (click)="login()"
           *ngIf="!checkoutButton"
         >

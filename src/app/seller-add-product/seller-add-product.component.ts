@@ -4,22 +4,28 @@ import { FileHandle, Product } from '../data-type';
 import { Router } from '@angular/router';
 import { SellerService } from '../services/seller.service';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { Unsubscribe } from '../services/unsubscribe.class';
+import { takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-seller-add-product',
   templateUrl: './seller-add-product.component.html',
   styleUrls: ['./seller-add-product.component.css'],
 })
-export class SellerAddProductComponent implements OnInit {
+export class SellerAddProductComponent extends Unsubscribe implements OnInit {
   addProductMessage: string | undefined = '';
   productImages: FileHandle[] = [];
   sellerId: number | undefined;
   addProduct!: FormGroup;
+
   constructor(
     private productService: ProductService,
     private sellerService: SellerService,
     private router: Router
-  ) {}
+  ) {
+    super();
+  }
+
   ngOnInit(): void {
     this.addProduct = new FormGroup({
       productName: new FormControl('', [Validators.required]),
@@ -28,11 +34,14 @@ export class SellerAddProductComponent implements OnInit {
       category: new FormControl('', [Validators.required]),
       description: new FormControl('', [Validators.required]),
     });
-    this.sellerService.getSellerId().subscribe((result) => {
-      if (result) {
-        this.sellerId = result;
-      }
-    });
+    this.sellerService
+      .getSellerId()
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((result) => {
+        if (result) {
+          this.sellerId = result;
+        }
+      });
   }
 
   submitProduct() {
@@ -43,15 +52,18 @@ export class SellerAddProductComponent implements OnInit {
       productImages: this.productImages,
     };
     const formData = this.prepareFormData(productData);
-    this.productService.addProduct(formData).subscribe((result) => {
-      if (result) {
-        this.addProductMessage = 'Product Added Successfully';
-      }
-      setTimeout(() => {
-        this.addProductMessage = undefined;
-        this.router.navigate(['seller-home']);
-      }, 3000);
-    });
+    this.productService
+      .addProduct(formData)
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((result) => {
+        if (result) {
+          this.addProductMessage = 'Product Added Successfully';
+        }
+        setTimeout(() => {
+          this.addProductMessage = undefined;
+          this.router.navigate(['seller-home']);
+        }, 3000);
+      });
   }
 
   onSelectedFile(event: any) {

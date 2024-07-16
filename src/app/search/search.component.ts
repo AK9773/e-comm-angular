@@ -1,24 +1,35 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
 import { ProductService } from '../services/product.service';
 import { Product, ProductResponse } from '../data-type';
+import { takeUntil } from 'rxjs';
+import { Unsubscribe } from '../services/unsubscribe.class';
 
 @Component({
   selector: 'app-search',
   templateUrl: './search.component.html',
   styleUrls: ['./search.component.css'],
 })
-export class SearchComponent implements OnInit {
+export class SearchComponent extends Unsubscribe implements OnInit {
   searchResult: ProductResponse[] | undefined;
-  constructor(
-    private activeRoute: ActivatedRoute,
-    private productService: ProductService
-  ) {}
+
+  constructor(private productService: ProductService) {
+    super();
+  }
   ngOnInit(): void {
-    let query = this.activeRoute.snapshot.paramMap.get('query');
-    query &&
-      this.productService.searchProduct(query).subscribe((result) => {
-        this.searchResult = result;
-      });
+    this.refresh();
+  }
+
+  refresh() {
+    this.productService.query.subscribe((res) => {
+      if (res.length !== 0) {
+        this.productService
+          .searchProduct(res)
+          .pipe(takeUntil(this.unsubscribe$))
+          .subscribe((result) => {
+            this.searchResult = result;
+            console.log(this.searchResult);
+          });
+      }
+    });
   }
 }

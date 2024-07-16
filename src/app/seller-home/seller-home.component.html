@@ -15,7 +15,7 @@
     <div class="card-body">
       <h5 class="card-title">{{ item.productName }}</h5>
       <p class="card-text">Price: Rs.{{ item.price }}</p>
-      <div class="d-flex justify-content-between">
+      <div class="d-flex justify-content-between fs-4">
         <a
           routerLink="/seller-update-product/{{ item.productId }}"
           class="me-3"
@@ -24,6 +24,7 @@
         </a>
 
         <fa-icon
+          class="deleteProduct"
           (click)="productDelete(item.productId)"
           [icon]="deleteIcon"
         ></fa-icon>

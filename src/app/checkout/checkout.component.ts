@@ -4,13 +4,15 @@ import { ProductService } from '../services/product.service';
 import { Router } from '@angular/router';
 import { UserService } from '../services/user.service';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { Unsubscribe } from '../services/unsubscribe.class';
+import { takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-checkout',
   templateUrl: './checkout.component.html',
   styleUrls: ['./checkout.component.css'],
 })
-export class CheckoutComponent implements OnInit {
+export class CheckoutComponent extends Unsubscribe implements OnInit {
   cartSummary: CartSummary = {
     amount: 0,
     tax: 0,
@@ -27,7 +29,9 @@ export class CheckoutComponent implements OnInit {
     private productService: ProductService,
     private userService: UserService,
     private router: Router
-  ) {}
+  ) {
+    super();
+  }
 
   ngOnInit(): void {
     this.checkoutForm = new FormGroup({
@@ -39,18 +43,24 @@ export class CheckoutComponent implements OnInit {
       address: new FormControl<string>('', [Validators.required]),
     });
     if (localStorage.getItem('JwtResponse')) {
-      this.userService.getUserId().subscribe((result) => {
-        this.userId = result;
-      });
+      this.userService
+        .getUserId()
+        .pipe(takeUntil(this.unsubscribe$))
+        .subscribe((result) => {
+          this.userId = result;
+        });
     }
     let JwtResponseObj = this.productService.getJwtResponseObj();
     if (JwtResponseObj && JwtResponseObj.user) {
-      this.productService.cartItems().subscribe((result) => {
-        if (result) {
-          this.cartData = result;
-          this.cartSumaryDetails();
-        }
-      });
+      this.productService
+        .cartItems()
+        .pipe(takeUntil(this.unsubscribe$))
+        .subscribe((result) => {
+          if (result) {
+            this.cartData = result;
+            this.cartSumaryDetails();
+          }
+        });
     } else {
       this.router.navigate(['/login']);
     }
@@ -71,9 +81,12 @@ export class CheckoutComponent implements OnInit {
             item.cartId && this.productService.deleteCartItems(item.cartId);
           }, 600);
         });
-        this.productService.orderNow(order).subscribe((result) => {
-          this.router.navigate(['my-order']);
-        });
+        this.productService
+          .orderNow(order)
+          .pipe(takeUntil(this.unsubscribe$))
+          .subscribe((result) => {
+            this.router.navigate(['my-order']);
+          });
       }
     }
   }

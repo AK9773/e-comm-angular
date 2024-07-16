@@ -111,9 +111,12 @@
       >
         Login
       </button>
-      <a class="toggle" (click)="openSignUp()"
-        >Don't have Account? Click to SignUp</a
-      >
+      <div class="link-box d-flex justify-content-between">
+        <a routerLink="/changePassword">Change Password</a>
+        <a class="toggle" (click)="openSignUp()"
+          >Don't have Account? Click to SignUp</a
+        >
+      </div>
     </form>
   </div>
 </div>

@@ -5,18 +5,22 @@ import { Cart, Product, ProductResponse, User, UserLogin } from '../data-type';
 import { ProductService } from '../services/product.service';
 import { HeaderComponent } from '../header/header.component';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { Unsubscribe } from '../services/unsubscribe.class';
+import { takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css'],
 })
-export class LoginComponent {
+export class LoginComponent extends Unsubscribe {
   constructor(
     private userService: UserService,
     private router: Router,
     private productService: ProductService
-  ) {}
+  ) {
+    super();
+  }
 
   showLogin: boolean = true;
   isLogin: boolean = false;
@@ -41,40 +45,46 @@ export class LoginComponent {
 
   signUp(): void {
     let data: User = this.userSignUp.value;
-    this.userService.userSignUp(data).subscribe((result) => {
-      if (result) {
-        this.signUpMessage = 'Sign Up Successfull';
+    this.userService
+      .userSignUp(data)
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((result) => {
+        if (result) {
+          this.signUpMessage = 'Sign Up Successfull';
+          setTimeout(() => {
+            this.showLogin = true;
+          }, 2000);
+        } else {
+          this.signUpMessage = 'userID already in use';
+          this.showLogin = false;
+        }
         setTimeout(() => {
-          this.showLogin = true;
+          this.signUpMessage = undefined;
         }, 2000);
-      } else {
-        this.signUpMessage = 'userID already in use';
-        this.showLogin = false;
-      }
-      setTimeout(() => {
-        this.signUpMessage = undefined;
-      }, 2000);
-    });
+      });
   }
 
   login(): void {
     let data: UserLogin = this.userLogin.value;
-    this.userService.userLogin(data).subscribe(
-      (result) => {
-        if (result) {
-          let resultData: string = JSON.stringify(result);
-          localStorage.setItem('JwtResponse', resultData);
-          this.router.navigate(['home']);
-          this.localCartToRemoteCart();
+    this.userService
+      .userLogin(data)
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe(
+        (result) => {
+          if (result) {
+            let resultData: string = JSON.stringify(result);
+            localStorage.setItem('JwtResponse', resultData);
+            this.router.navigate(['home']);
+            this.localCartToRemoteCart();
+          }
+        },
+        (error) => {
+          if (error && error.status == 401) {
+            this.isLogin = true;
+            this.authError = 'userId or Password is incorrect. Please Check.';
+          }
         }
-      },
-      (error) => {
-        if (error && error.status == 401) {
-          this.isLogin = true;
-          this.authError = 'userId or Password is incorrect. Please Check.';
-        }
-      }
-    );
+      );
   }
 
   openLogin() {
@@ -89,24 +99,30 @@ export class LoginComponent {
     let localCartData = localStorage.getItem('localCart');
 
     if (localStorage.getItem('JwtResponse')) {
-      this.userService.getUserId().subscribe((result) => {
-        this.userId = result;
-        if (localCartData) {
-          let localCartDataJSON: Cart[] =
-            localCartData && JSON.parse(localCartData);
-          localCartDataJSON.forEach((product: Cart, index) => {
-            let cartData: Cart = {
-              ...product,
-              userId: this.userId,
-              cartId: undefined,
-            };
-            this.productService.addToCart(cartData).subscribe();
-            if (localCartDataJSON.length === index + 1) {
-              localStorage.removeItem('localCart');
-            }
-          });
-        }
-      });
+      this.userService
+        .getUserId()
+        .pipe(takeUntil(this.unsubscribe$))
+        .subscribe((result) => {
+          this.userId = result;
+          if (localCartData) {
+            let localCartDataJSON: Cart[] =
+              localCartData && JSON.parse(localCartData);
+            localCartDataJSON.forEach((product: Cart, index) => {
+              let cartData: Cart = {
+                ...product,
+                userId: this.userId,
+                cartId: undefined,
+              };
+              this.productService
+                .addToCart(cartData)
+                .pipe(takeUntil(this.unsubscribe$))
+                .subscribe();
+              if (localCartDataJSON.length === index + 1) {
+                localStorage.removeItem('localCart');
+              }
+            });
+          }
+        });
     }
   }
 }

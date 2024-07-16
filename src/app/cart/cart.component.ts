@@ -3,13 +3,15 @@ import { ProductService } from '../services/product.service';
 import { Cart, CartSummary, Product } from '../data-type';
 import { Router } from '@angular/router';
 import { UserService } from '../services/user.service';
+import { Unsubscribe } from '../services/unsubscribe.class';
+import { takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-cart',
   templateUrl: './cart.component.html',
   styleUrls: ['./cart.component.css'],
 })
-export class CartComponent implements OnInit {
+export class CartComponent extends Unsubscribe implements OnInit {
   cartItems: Cart[] | undefined;
   userId: number | undefined;
   userLogin: boolean = true;
@@ -26,15 +28,18 @@ export class CartComponent implements OnInit {
     private productService: ProductService,
     private userService: UserService,
     private router: Router
-  ) {}
+  ) {
+    super();
+  }
 
   ngOnInit(): void {
     if (localStorage.getItem('JwtResponse')) {
-      this.userService.getUserId().subscribe((result) => {
-        if (result) {
+      this.userService
+        .getUserId()
+        .pipe(takeUntil(this.unsubscribe$))
+        .subscribe((result) => {
           this.userId = result;
-        }
-      });
+        });
     }
 
     this.loadDetails();
@@ -45,21 +50,26 @@ export class CartComponent implements OnInit {
   }
 
   removeFromCart(cartId: number | undefined) {
-    let JwtResponse = localStorage.getItem('JwtResponse');
-    let JwtResponseObj = JwtResponse && JSON.parse(JwtResponse);
-    if (JwtResponseObj && JwtResponseObj.user) {
-      if (this.cartItems && cartId) {
-        this.productService.removeFromDBCart(cartId).subscribe((result) => {
-          if (result && this.userId) {
-            this.productService.CartItemList(this.userId);
-            this.loadDetails();
-          }
-        });
-      }
-    } else {
-      if (this.cartItems && cartId) {
-        this.productService.removeFromCart(cartId);
-        this.loadDetails();
+    if (confirm('Are you sure to remove this product?')) {
+      let JwtResponse = localStorage.getItem('JwtResponse');
+      let JwtResponseObj = JwtResponse && JSON.parse(JwtResponse);
+      if (JwtResponseObj && JwtResponseObj.user) {
+        if (this.cartItems && cartId) {
+          this.productService
+            .removeFromDBCart(cartId)
+            .pipe(takeUntil(this.unsubscribe$))
+            .subscribe((result) => {
+              if (result && this.userId) {
+                this.productService.CartItemList(this.userId);
+                this.loadDetails();
+              }
+            });
+        }
+      } else {
+        if (this.cartItems && cartId) {
+          this.productService.removeFromCart(cartId);
+          this.loadDetails();
+        }
       }
     }
   }
@@ -68,15 +78,18 @@ export class CartComponent implements OnInit {
     let JwtResponse = localStorage.getItem('JwtResponse');
     let JwtResponseObj = JwtResponse && JSON.parse(JwtResponse);
     if (JwtResponseObj && JwtResponseObj.user) {
-      this.productService.cartItems().subscribe((result) => {
-        if (result) {
-          this.cartItems = result;
-          this.cartSummaryDetails();
-          if (result.length === 0) {
-            this.router.navigate(['/home']);
+      this.productService
+        .cartItems()
+        .pipe(takeUntil(this.unsubscribe$))
+        .subscribe((result) => {
+          if (result) {
+            this.cartItems = result;
+            this.cartSummaryDetails();
+            if (result.length === 0) {
+              this.router.navigate(['/home']);
+            }
           }
-        }
-      });
+        });
       this.checkoutButton = true;
       this.userLogin = true;
     } else {

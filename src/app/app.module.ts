@@ -9,7 +9,7 @@ import { CartComponent } from './cart/cart.component';
 import { LoginComponent } from './login/login.component';
 import { SellerAuthComponent } from './seller-auth/seller-auth.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { SellerHomeComponent } from './seller-home/seller-home.component';
 import { SellerAddProductComponent } from './seller-add-product/seller-add-product.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
@@ -19,6 +19,8 @@ import { ProductDetailsComponent } from './product-details/product-details.compo
 import { CheckoutComponent } from './checkout/checkout.component';
 import { MyOrderComponent } from './my-order/my-order.component';
 import { FooterComponent } from './footer/footer.component';
+import { ChangePasswordComponent } from './change-password/change-password.component';
+import { AuthInterceptor } from './services/auth.interceptor';
 
 @NgModule({
   declarations: [
@@ -36,6 +38,7 @@ import { FooterComponent } from './footer/footer.component';
     CheckoutComponent,
     MyOrderComponent,
     FooterComponent,
+    ChangePasswordComponent,
   ],
   imports: [
     BrowserModule,
@@ -45,7 +48,13 @@ import { FooterComponent } from './footer/footer.component';
     FontAwesomeModule,
     ReactiveFormsModule,
   ],
-  providers: [],
+  providers: [
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthInterceptor,
+      multi: true,
+    },
+  ],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

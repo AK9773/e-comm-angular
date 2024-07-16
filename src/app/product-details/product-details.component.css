@@ -2,9 +2,11 @@
   display: flex;
   width: 80%;
   margin: 10px auto;
-  border: 2px solid red;
+  border: 2px solid rgb(0, 179, 255);
   border-radius: 0.5rem;
   background-color: rgb(210, 245, 245);
+  box-shadow: 1px 1px 20px 5px #457b9d;
+  margin-top: 3rem;
 }
 .product-image {
   height: 20rem;
@@ -13,6 +15,7 @@
   margin-top: 5px;
   margin-bottom: 5px;
 }
+
 .details {
   text-align: center;
 }
@@ -40,22 +43,7 @@
   width: 3rem;
 }
 
-.cart-button {
-  width: 8rem;
-  background-color: aqua;
-  margin-left: 1rem;
-  border-radius: 5px;
-}
-.cart-button {
-  width: 8rem;
-  background-color: aqua;
-  margin-left: 1rem;
-  border-radius: 5px;
-}
-.buy-button {
-  width: 8rem;
-  height: 3rem;
-  background-color: aqua;
-  border-radius: 5px;
-  margin: 1rem auto;
+.button_height {
+  height: 40px;
+  padding: 10px;
 }
